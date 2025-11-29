@@ -1,2200 +1,676 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dehn's PSW Model - Comprehensive Learning Guide</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --light-bg: #ecf0f1;
-            --dark-bg: #34495e;
-            --text-color: #2c3e50;
-            --border-radius: 8px;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 8px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header Styles */
-        header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%);
-            color: white;
-            padding: 30px 0;
-            box-shadow: var(--shadow);
-        }
-
-        header h1 {
-            font-size: 2.5em;
-            text-align: center;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        header p {
-            text-align: center;
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        /* Navigation */
-        nav {
-            background: white;
-            padding: 15px 0;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 0 20px;
-        }
-
-        nav button {
-            background: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-        }
-
-        nav button:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        nav button.active {
-            background: var(--accent-color);
-            transform: scale(1.05);
-        }
-
-        /* Main Content */
-        .content-wrapper {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-hover);
-        }
-
-        .section {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h2 {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--secondary-color);
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-            font-size: 2em;
-        }
-
-        h3 {
-            color: var(--secondary-color);
-            margin-top: 25px;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        h4 {
-            color: var(--dark-bg);
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        /* Cards and Boxes */
-        .info-box {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-left: 4px solid var(--secondary-color);
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-
-        .info-box.warning {
-            background: #fff3cd;
-            border-left-color: var(--warning-color);
-        }
-
-        .info-box.success {
-            background: #d4edda;
-            border-left-color: var(--success-color);
-        }
-
-        .info-box.important {
-            background: #f8d7da;
-            border-left-color: var(--accent-color);
-        }
-
-        /* Grid Layout for Cards */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .card {
-            background: white;
-            border: 2px solid var(--light-bg);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--secondary-color);
-        }
-
-        .card h4 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .card ul {
-            margin-left: 20px;
-        }
-
-        .card li {
-            margin-bottom: 8px;
-        }
-
-        /* Correlation Card Specific Styles */
-        .correlation-card {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .correlation-card h3 {
-            background: var(--primary-color);
-            color: white;
-            padding: 15px;
-            margin: -20px -20px 15px -20px;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            font-size: 1.3em;
-            text-align: center;
-        }
-
-        .correlation-section {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed #ccc;
-        }
-
-        .correlation-section:last-child {
-            border-bottom: none;
-        }
-
-        .correlation-section h5 {
-            color: var(--secondary-color);
-            font-size: 1em;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .correlation-section ul {
-            list-style-type: none;
-            padding-left: 5px;
-        }
-
-        .correlation-section li {
-            position: relative;
-            padding-left: 15px;
-            margin-bottom: 4px;
-            font-size: 0.95em;
-        }
-
-        .correlation-section li::before {
-            content: "•";
-            color: var(--secondary-color);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        /* Process Definitions */
-        .process-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .process-item {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .process-item:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .process-item h4 {
-            color: var(--secondary-color);
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        /* Checklist */
-        .checklist {
-            background: white;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin: 20px 0;
-            box-shadow: var(--shadow);
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 15px;
-            margin: 10px 0;
-            background: var(--light-bg);
-            border-radius: var(--border-radius);
-            transition: all 0.3s ease;
-        }
-
-        .checklist-item:hover {
-            background: #d5dbdb;
-        }
-
-        .checklist-item input[type="checkbox"] {
-            margin-right: 15px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .checklist-item label {
-            cursor: pointer;
-            flex-grow: 1;
-        }
-
-        /* Table Styles */
-        .table-wrapper {
-            overflow-x: auto;
-            margin: 25px 0;
-            box-shadow: var(--shadow);
-            border-radius: var(--border-radius);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th {
-            background: var(--primary-color);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--light-bg);
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        /* Steps Container */
-        .steps-container {
-            counter-reset: step-counter;
-            margin: 30px 0;
-        }
-
-        .step {
-            position: relative;
-            padding: 25px;
-            padding-left: 80px;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .step:hover {
-            transform: translateX(10px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .step::before {
-            counter-increment: step-counter;
-            content: counter(step-counter);
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            background: var(--secondary-color);
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            box-shadow: var(--shadow);
-        }
-
-        .step h4 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        /* Interactive Quiz */
-        .quiz-container {
-            background: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin: 20px 0;
-        }
-
-        .quiz-question {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .quiz-question.active {
-            display: block;
-        }
-
-        .quiz-options {
-            margin: 20px 0;
-        }
-
-        .quiz-option {
-            background: var(--light-bg);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .quiz-option:hover {
-            background: #d5dbdb;
-            transform: translateX(5px);
-        }
-
-        .quiz-option.selected {
-            border-color: var(--secondary-color);
-            background: #d4edda;
-        }
-
-        .quiz-option.correct {
-            background: #d4edda;
-            border-color: var(--success-color);
-        }
-
-        .quiz-option.incorrect {
-            background: #f8d7da;
-            border-color: var(--accent-color);
-        }
-
-        .quiz-button {
-            background: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1em;
-            margin: 10px 5px;
-            transition: all 0.3s ease;
-        }
-
-        .quiz-button:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        .quiz-result {
-            background: var(--light-bg);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-top: 20px;
-            display: none;
-        }
-
-        /* Accordion */
-        .accordion {
-            margin: 20px 0;
-        }
-
-        .accordion-item {
-            background: white;
-            margin-bottom: 10px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .accordion-header {
-            background: var(--secondary-color);
-            color: white;
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .accordion-header:hover {
-            background: var(--primary-color);
-        }
-
-        .accordion-header::after {
-            content: '▼';
-            transition: transform 0.3s ease;
-        }
-
-        .accordion-header.active::after {
-            transform: rotate(180deg);
-        }
-
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            padding: 0 20px;
-        }
-
-        .accordion-content.active {
-            max-height: 2000px;
-            padding: 20px;
-        }
-
-        /* Progress Tracker */
-        .progress-tracker {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin: 20px 0;
-        }
-
-        .progress-bar {
-            background: var(--light-bg);
-            height: 30px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, var(--success-color) 0%, var(--secondary-color) 100%);
-            height: 100%;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 30px 0;
-            margin-top: 50px;
-        }
-
-        /* Print Styles */
-        @media print {
-            nav, .quiz-container, .interactive {
-                display: none;
-            }
-
-            .section {
-                display: block;
-                page-break-after: always;
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            .content-wrapper {
-                padding: 20px;
-            }
-
-            nav ul {
-                flex-direction: column;
-            }
-
-            nav button {
-                width: 100%;
-            }
-
-            .card-grid, .process-list {
-                grid-template-columns: 1fr;
-            }
-
-            .step {
-                padding-left: 20px;
-                padding-top: 70px;
-            }
-
-            .step::before {
-                left: 50%;
-                transform: translateX(-50%);
-                top: 10px;
-            }
-        }
-
-        /* Tooltips */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted var(--secondary-color);
-            cursor: help;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 250px;
-            background-color: var(--dark-bg);
-            color: white;
-            text-align: center;
-            border-radius: var(--border-radius);
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -125px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Button Styles */
-        .btn-primary {
-            background: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .btn-secondary {
-            background: var(--success-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1em;
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background: #229954;
-            transform: translateY(-2px);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C-DM Calculator - Concordance-Discordance Model for SLD Identification</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+.container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+.header h1 { font-size: 2em; margin-bottom: 10px; }
+.header p { font-size: 0.95em; opacity: 0.95; }
+.content { padding: 30px; }
+.dont-forget-box { background: #e3f2fd; border-left: 4px solid #2196f3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+.dont-forget-box h4 { color: #1976d2; margin-bottom: 10px; font-size: 1.1em; }
+.dont-forget-box p { color: #333; line-height: 1.6; font-size: 0.95em; }
+.caution-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+.caution-box h4 { color: #e65100; margin-bottom: 10px; font-size: 1.1em; }
+.caution-box p { color: #333; line-height: 1.6; font-size: 0.95em; }
+.info-box { background: #f8f9fa; border-left: 4px solid #667eea; padding: 15px; margin-bottom: 30px; border-radius: 5px; }
+.info-box h3 { color: #667eea; margin-bottom: 10px; font-size: 1.1em; }
+.info-box p { color: #555; line-height: 1.6; font-size: 0.95em; }
+.formula-box { background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+.formula-box code { font-size: 1.2em; font-weight: bold; color: #856404; }
+.section { background: #f8f9fa; padding: 25px; margin-bottom: 25px; border-radius: 10px; border: 2px solid #e9ecef; }
+.section h2 { color: #667eea; margin-bottom: 20px; font-size: 1.4em; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em; }
+.input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
+.input-group input:focus, .input-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+.input-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.help-text { font-size: 0.85em; color: #666; margin-top: 5px; font-style: italic; }
+.button-group { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+.btn { padding: 15px 30px; font-size: 1em; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; font-weight: 600; flex: 1; min-width: 150px; }
+.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-secondary:hover { background: #5a6268; }
+.btn-info { background: #17a2b8; color: white; }
+.btn-info:hover { background: #138496; }
+.results { margin-top: 30px; display: none; }
+.results.show { display: block; animation: slideIn 0.5s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.result-card { background: white; padding: 25px; margin-bottom: 20px; border-radius: 10px; border-left: 5px solid #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.result-card h3 { color: #667eea; margin-bottom: 15px; font-size: 1.2em; }
+.result-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+.result-item:last-child { border-bottom: none; }
+.result-label { font-weight: 600; color: #555; }
+.result-value { color: #333; font-weight: bold; }
+.significant { color: #28a745; font-weight: bold; }
+.not-significant { color: #dc3545; font-weight: bold; }
+.conclusion { background: #d4edda; border: 2px solid #28a745; padding: 20px; border-radius: 10px; margin-top: 20px; }
+.conclusion.negative { background: #f8d7da; border-color: #dc3545; }
+.conclusion h3 { color: #155724; margin-bottom: 10px; }
+.conclusion.negative h3 { color: #721c24; }
+.conclusion p { line-height: 1.6; color: #155724; }
+.conclusion.negative p { color: #721c24; }
+.steps-guide { background: #e7f3ff; border: 2px solid #2196f3; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+.steps-guide h3 { color: #1976d2; margin-bottom: 15px; }
+.steps-guide ol { margin-left: 20px; color: #555; }
+.steps-guide li { margin-bottom: 10px; line-height: 1.6; }
+.interpretation { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin-top: 15px; border-radius: 5px; }
+.interpretation strong { color: #e65100; }
+.step-indicator { display: inline-block; background: #667eea; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-right: 10px; }
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e9ecef; }
+.tab { padding: 12px 24px; background: transparent; border: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.3s; }
+.tab.active { color: #667eea; border-bottom-color: #667eea; }
+.tab:hover { color: #667eea; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.theory-section { background: #f1f8e9; padding: 20px; border-radius: 10px; margin: 20px 0; }
+.theory-section h4 { color: #33691e; margin-bottom: 15px; }
+.theory-section ul { margin-left: 20px; line-height: 1.8; }
+@media (max-width: 768px) {
+.header h1 { font-size: 1.5em; }
+.content { padding: 15px; }
+.section { padding: 15px; }
+.input-row { grid-template-columns: 1fr; }
+.button-group { flex-direction: column; }
+.btn { width: 100%; }
+.tabs { flex-direction: column; }
+.tab { text-align: left; }
+}
+</style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Dehn's PSW Model Learning Guide</h1>
-            <p>Comprehensive Guide to Pattern of Strengths and Weaknesses Assessment for SLD Identification</p>
-        </div>
-    </header>
-
-    <nav>
-        <ul>
-            <li><button onclick="showSection('intro')" class="active">Introduction</button></li>
-            <li><button onclick="showSection('overview')">Model Overview</button></li>
-            <li><button onclick="showSection('processes')">14 Processes</button></li>
-            <li><button onclick="showSection('criteria')">Diagnostic Criteria</button></li>
-            <li><button onclick="showSection('workflow')">Step-by-Step</button></li>
-            <li><button onclick="showSection('correlations')">Process-Academic Links</button></li>
-            <li><button onclick="showSection('ppa')">PPA Software</button></li>
-            <li><button onclick="showSection('quiz')">Knowledge Check</button></li>
-        </ul>
-    </nav>
-
-    <div class="container">
-        <div class="content-wrapper">
-            <section id="intro" class="section active">
-                <h2>Welcome to Dehn's PSW Model</h2>
-                
-                <div class="info-box important">
-                    <h3>What is Dehn's PSW Model?</h3>
-                    <p>Dehn's Pattern of Strengths and Weaknesses (PSW) model is a comprehensive, research-based approach to identifying Specific Learning Disabilities (SLD) through the systematic analysis of psychological processing strengths and weaknesses.</p>
-                </div>
-
-                <h3>Key Features of Dehn's Model</h3>
-                <div class="card-grid">
-                    <div class="card">
-                        <h4>🧠 Comprehensive Coverage</h4>
-                        <p>Analyzes 14 distinct psychological/cognitive processes that are essential for academic learning, going beyond traditional CHC theory.</p>
-                    </div>
-                    <div class="card">
-                        <h4>📊 Statistical Rigor</h4>
-                        <p>Uses statistically significant intra-individual discrepancies to identify true processing deficits and strengths.</p>
-                    </div>
-                    <div class="card">
-                        <h4>🔗 Research-Based Links</h4>
-                        <p>Requires documented research-based relationships between processing weaknesses and academic deficits.</p>
-                    </div>
-                    <div class="card">
-                        <h4>💻 Software Support</h4>
-                        <p>Utilizes the Psychological Processing Analyzer (PPA) software for accurate statistical analysis.</p>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <h3>Why Use Dehn's Model?</h3>
-                    <ul>
-                        <li><strong>Enhanced Diagnostic Accuracy:</strong> Reduces false positives by requiring both normative and intra-individual weaknesses</li>
-                        <li><strong>Neuropsychological Foundation:</strong> Based on brain-behavior relationships and cognitive neuroscience</li>
-                        <li><strong>Intervention Planning:</strong> Identifies specific processing deficits to target with evidence-based interventions</li>
-                        <li><strong>Preponderance of Evidence:</strong> Aligns with best practices for SLD identification in Idaho and other states</li>
-                    </ul>
-                </div>
-
-                <h3>What You'll Learn</h3>
-                <div class="steps-container">
-                    <div class="step">
-                        <h4>Understanding the Foundation</h4>
-                        <p>Learn the theoretical basis for psychological processing assessment and why processing deficits are key markers for SLD.</p>
-                    </div>
-                    <div class="step">
-                        <h4>14 Essential Processes</h4>
-                        <p>Master the definitions and academic relationships of all 14 psychological processes included in Dehn's model.</p>
-                    </div>
-                    <div class="step">
-                        <h4>Diagnostic Criteria</h4>
-                        <p>Understand the specific requirements for identifying processing deficits and establishing PSW patterns.</p>
-                    </div>
-                    <div class="step">
-                        <h4>Practical Application</h4>
-                        <p>Follow step-by-step workflows for conducting assessments, analyzing data, and making diagnostic decisions.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="overview" class="section">
-                <h2>Dehn's PSW Model Overview</h2>
-
-                <div class="info-box success">
-                    <h3>Core Principle</h3>
-                    <p>For psychological processing assessment data to support an SLD diagnosis, ALL of the following must occur:</p>
-                </div>
-
-                <div class="checklist">
-                    <h3>Essential Requirements</h3>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="req1">
-                        <label for="req1"><strong>At least one psychological process is identified as a DEFICIT</strong><br>
-                        A deficit is defined as a process score that is BOTH below average AND an intra-individual weakness (statistically significant).</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="req2">
-                        <label for="req2"><strong>Score discrepancies must be statistically significant</strong><br>
-                        The intra-individual weakness should meet criteria typically required for statistical significance (usually 12-15 standard score points).</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="req3">
-                        <label for="req3"><strong>Subtest scores must be unitary/cohesive</strong><br>
-                        The subtest scores comprising the psychological process must not have significant differences among them to consider the process a valid deficit.</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="req4">
-                        <label for="req4"><strong>At least one process score is within average range</strong><br>
-                        There must be evidence of processing strengths to establish a pattern. If all processes are low, consider intellectual disability instead.</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="req5">
-                        <label for="req5"><strong>Research-based relationship required</strong><br>
-                        The processing deficit must have a significant research-based relation with the deficient academic skill being considered for SLD.</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="req6">
-                        <label for="req6"><strong>Consistency between process and achievement</strong><br>
-                        There should be consistency (similarity in severity) between the process score(s) and the related academic skill score.</label>
-                    </div>
-                </div>
-
-                <h3>How Dehn's Model Differs from Other PSW Approaches</h3>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Feature</th>
-                                <th>Dehn's Model</th>
-                                <th>Other PSW Models</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Processing Areas</strong></td>
-                                <td>14 processes including attention, executive functions, phonological processing, orthographic processing</td>
-                                <td>Typically 7-10 CHC broad abilities</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Deficit Definition</strong></td>
-                                <td>BOTH below average AND intra-individual weakness</td>
-                                <td>Often only normative OR intra-individual weakness</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Theoretical Base</strong></td>
-                                <td>CHC theory PLUS neuropsychological processes</td>
-                                <td>Primarily CHC theory</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Software Support</strong></td>
-                                <td>Psychological Processing Analyzer (PPA)</td>
-                                <td>Various or none</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Unitary Requirement</strong></td>
-                                <td>Explicitly requires cohesive subtest scores</td>
-                                <td>May not explicitly require</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="info-box warning">
-                    <h3>⚠️ Important Considerations</h3>
-                    <ul>
-                        <li><strong>Preponderance of Evidence:</strong> PSW findings must be contextualized within the student's complete history and all evaluation data</li>
-                        <li><strong>Professional Judgment:</strong> Statistical findings should be interpreted by qualified professionals with expertise in assessment</li>
-                        <li><strong>Exclusionary Factors:</strong> Must rule out factors like lack of instruction, language barriers, sensory issues, or emotional disturbances</li>
-                        <li><strong>Cultural Competence:</strong> Assessment must reflect diversity and cultural considerations</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="processes" class="section">
-                <h2>The 14 Psychological Processes</h2>
-                
-                <div class="info-box">
-                    <p>Dehn's model includes 14 distinct psychological/cognitive processes that are highly related to academic learning. These go beyond traditional CHC broad abilities to include critical neuropsychological functions.</p>
-                </div>
-
-                <div class="process-list">
-                    <div class="process-item">
-                        <h4>1. Attention (AT)</h4>
-                        <p>A complex neuropsychological function used to focus on certain stimuli for information processing. Foundation for all higher-order processing. Critical for mathematics skills.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>2. Auditory Processing (AP)</h4>
-                        <p>The ability to detect and process meaningful nonverbal information in sound; analyze and synthesize auditory information. Essential for reading and language skills.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>3. Executive Functions (EF)</h4>
-                        <p>Cognitive control and behavioral/emotional control including concept generation, problem solving, attentional shifting, planning, organizing, working memory, and retrieval fluency.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>4. Fine Motor (FM)</h4>
-                        <p>Precise hand and finger movements required for writing and other academic tasks. Critical for written expression.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>5. Fluid Reasoning (FR)</h4>
-                        <p>Novel reasoning and problem-solving ability; flexible control of attention to solve unfamiliar problems. Involves manipulating rules, abstracting, generalizing, and identifying logical relationships.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>6. Verbal Long-Term Recall (VLTR)</h4>
-                        <p>The ability to store, consolidate, and retrieve verbal information over time (minutes to years) through association. Critical for all academic learning.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>7. Visual-Spatial Long-Term Recall (VSLTR)</h4>
-                        <p>The ability to store and retrieve visual-spatial information over extended periods. Important for mathematics and visual learning.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>8. Oral Language (OL)</h4>
-                        <p>Linguistic processes involved in verbal communication, including word structure, meaning, sentence relationships, and functional language use. Foundation for literacy.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>9. Phonological Processing (PP)</h4>
-                        <p>Manipulation of phonemes that comprise words. Includes phonemic awareness, detection, matching, isolation, deletion, segmentation, and blending. Most critical for basic reading skills.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>10. Processing Speed (PS)</h4>
-                        <p>The ability to perform simple, repetitive cognitive tasks quickly and fluently. Affects fluency in reading and all academic areas. Influences working memory efficiency.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>11. Visual-Spatial Processing (VSP)</h4>
-                        <p>The ability to perceive, analyze, synthesize, manipulate, and transform visual patterns and images. Important for mathematics and visual problem-solving.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>12. Orthographic Processing (OP)</h4>
-                        <p>The ability to form, store, and access orthographic representations (written word forms). Critical for reading fluency, spelling, and written expression.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>13. Verbal Working Memory (VWM)</h4>
-                        <p>Limited capacity to retain and manipulate verbal information simultaneously over short periods. Essential for reading comprehension, math calculation, and written expression.</p>
-                    </div>
-
-                    <div class="process-item">
-                        <h4>14. Visual-Spatial Working Memory (VSWM)</h4>
-                        <p>Limited capacity to retain and manipulate visual-spatial information. Important for mathematics and visual problem-solving tasks.</p>
-                    </div>
-                </div>
-
-                <div class="info-box success">
-                    <h3>Process Clusters</h3>
-                    <p>These 14 processes are interrelated and often function in clusters:</p>
-                    <ul>
-                        <li>Working Memory (VWM, VSWM), Attention (AT), Executive Functions (EF), Fluid Reasoning (FR), Verbal Long-Term Recall (VLTR), Processing Speed (PS)</li>
-                        <li>Executive Functions (EF), Attention (AT), Verbal Working Memory (VWM), Fluid Reasoning (FR)</li>
-                        <li>Oral Language (OL), Auditory Processing (AP), Phonological Processing (PP), Verbal Long-Term Recall (VLTR), Verbal Working Memory (VWM)</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="criteria" class="section">
-                <h2>Diagnostic Criteria & Decision-Making</h2>
-
-                <h3>Understanding "Deficit" vs. "Weakness"</h3>
-                <div class="card-grid">
-                    <div class="card">
-                        <h4>❌ Normative Weakness Only</h4>
-                        <p><strong>Definition:</strong> Score below 90 (low average or below)</p>
-                        <p><strong>Status:</strong> NOT sufficient for SLD diagnosis</p>
-                        <p><strong>Prevalence:</strong> ~16-25% of population</p>
-                    </div>
-
-                    <div class="card">
-                        <h4>⚠️ Intra-Individual Weakness Only</h4>
-                        <p><strong>Definition:</strong> Significantly lower than person's own mean</p>
-                        <p><strong>Status:</strong> NOT sufficient for SLD diagnosis</p>
-                        <p><strong>Prevalence:</strong> Nearly everyone has one</p>
-                    </div>
-
-                    <div class="card">
-                        <h4>✅ DEFICIT (Required for SLD)</h4>
-                        <p><strong>Definition:</strong> BOTH below average AND intra-individual weakness</p>
-                        <p><strong>Status:</strong> Required for SLD diagnosis</p>
-                        <p><strong>Prevalence:</strong> Statistically unusual</p>
-                    </div>
-
-                    <div class="card">
-                        <h4>⭐ Asset/Strength</h4>
-                        <p><strong>Definition:</strong> Average or above AND intra-individual strength</p>
-                        <p><strong>Status:</strong> Required to show pattern</p>
-                        <p><strong>Note:</strong> Average range can be strength</p>
-                    </div>
-                </div>
-
-                <h3>Cutoff Scores and Statistical Significance</h3>
-                <div class="info-box important">
-                    <h4>No Universal Cutoffs!</h4>
-                    <p>There are NO single, universal scores that definitively indicate strength or weakness. Determination is based on individual's performance across multiple processing domains.</p>
-                </div>
-
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Classification</th>
-                                <th>Normative Criterion</th>
-                                <th>Intra-Individual Criterion</th>
-                                <th>Combined Requirement</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Deficit</strong></td>
-                                <td>SS ≤ 90 (or 85)</td>
-                                <td>12-15 points below predicted</td>
-                                <td>BOTH required</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Weakness</strong></td>
-                                <td>SS ≤ 90</td>
-                                <td>-OR-</td>
-                                <td>Either one</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Average</strong></td>
-                                <td>SS 90-109</td>
-                                <td>Within 12 points of predicted</td>
-                                <td>Can be strength</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Strength</strong></td>
-                                <td>SS ≥ 90 (at minimum)</td>
-                                <td>12-15 points above predicted</td>
-                                <td>Either sufficient</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Asset</strong></td>
-                                <td>SS ≥ 110</td>
-                                <td>12-15 points above predicted</td>
-                                <td>BOTH required</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3>Academic Achievement Requirements</h3>
-                <div class="info-box warning">
-                    <h4>Evidence of Low Achievement Required</h4>
-                    <p>Student must demonstrate significantly below average performance on norm-referenced, standardized academic achievement assessment in area(s) of concern.</p>
-                </div>
-
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>Standard Criterion</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>1.5 Standard Deviations Below Mean</strong></p>
-                            <ul>
-                                <li>Standard Score (SS) ≤ 78</li>
-                                <li>This is the primary criterion</li>
-                                <li>Use when processing evidence is less clear</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>Lenient Criterion (Preponderance of Evidence)</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>1.0 Standard Deviation Below Mean</strong></p>
-                            <ul>
-                                <li>Standard Score (SS) ≤ 85</li>
-                                <li>May be used when preponderance of evidence indicates SLD</li>
-                                <li>Requires strong PSW pattern</li>
-                                <li>Must document rationale clearly</li>
-                                <li>Example: Strong pattern of processing strengths and weaknesses clearly linked to academic area</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>Eight SLD Achievement Areas</span>
-                        </div>
-                        <div class="accordion-content">
-                            <ul>
-                                <li>Oral Expression</li>
-                                <li>Listening Comprehension</li>
-                                <li>Basic Reading Skills</li>
-                                <li>Reading Fluency</li>
-                                <li>Reading Comprehension</li>
-                                <li>Mathematics Calculation</li>
-                                <li>Mathematics Problem Solving</li>
-                                <li>Written Expression</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <h3>Exclusionary Factors Must Be Ruled Out</h3>
-                <div class="checklist">
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl1">
-                        <label for="excl1">Visual, hearing, or motor disabilities (unless SLD exists in addition)</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl2">
-                        <label for="excl2">Intellectual disability</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl3">
-                        <label for="excl3">Emotional disturbance</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl4">
-                        <label for="excl4">Cultural factors</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl5">
-                        <label for="excl5">Environmental or economic disadvantage</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl6">
-                        <label for="excl6">Limited English proficiency</label>
-                    </div>
-                    <div class="checklist-item">
-                        <input type="checkbox" id="excl7">
-                        <label for="excl7">Lack of appropriate instruction in reading or math</label>
-                    </div>
-                </div>
-            </section>
-
-            <section id="workflow" class="section">
-                <h2>Step-by-Step Workflow</h2>
-
-                <div class="info-box">
-                    <p>Follow this systematic approach to conduct a comprehensive PSW assessment using Dehn's model.</p>
-                </div>
-
-                <div class="steps-container">
-                    <div class="step">
-                        <h4>Referral and Background Review</h4>
-                        <ul>
-                            <li>Review referral concerns and academic areas of difficulty</li>
-                            <li>Examine student's educational history and previous interventions</li>
-                            <li>Document intervention fidelity, frequency, duration, and intensity</li>
-                            <li>Review attendance and opportunity to learn</li>
-                            <li>Consider exclusionary factors</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Plan Assessment Using Process-Academic Correlations</h4>
-                        <ul>
-                            <li>Identify the academic area(s) of concern</li>
-                            <li>Consult the Process-Academic Correlation table</li>
-                            <li>Select processing areas with strongest and strong correlations</li>
-                            <li>Choose appropriate tests and subtests using selective cross-battery approach</li>
-                            <li>Ensure composite scores (not just subtests) will be available</li>
-                        </ul>
-                        <div class="info-box" style="margin-top: 15px;">
-                            <strong>Example:</strong> For Basic Reading Skills difficulties, assess: Phonological Processing (PP), Crystallized Intelligence (Gc), Short-Term Memory (VWM) (Strongest Influence), and Auditory Processing (AP), Long-Term Retrieval (VLTR), Processing Speed (PS) (Strong Influence).
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <h4>Conduct Comprehensive Assessment</h4>
-                        <ul>
-                            <li>Administer standardized academic achievement tests in areas of concern</li>
-                            <li>Administer cognitive/processing assessments using multi-battery approach</li>
-                            <li>Ensure at least 2 subtests per processing area for composite reliability</li>
-                            <li>Include cognitive ability measure (for predictor score)</li>
-                            <li>Conduct classroom observations</li>
-                            <li>Gather curriculum-based measurement data</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Convert Scores to Common Metric</h4>
-                        <ul>
-                            <li>Convert all scores to standard scores (Mean = 100, SD = 15)</li>
-                            <li>Calculate clinical composites for processes without standardized composites</li>
-                            <li>Average subtest scores from same process area</li>
-                            <li>Verify score conversions are accurate</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Check Subtest Score Unity/Cohesiveness</h4>
-                        <ul>
-                            <li>Examine subtests within each processing composite</li>
-                            <li>Look for significant scatter (≥15 point differences)</li>
-                            <li>If significant scatter exists, consider administering additional subtest</li>
-                            <li>May need to examine narrow abilities separately</li>
-                            <li>Non-unitary composites should be interpreted with caution</li>
-                        </ul>
-                        <div class="info-box warning" style="margin-top: 15px;">
-                            <strong>Important:</strong> If subtest scores within a processing area vary widely, the composite may not validly represent that process.
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <h4>Identify Normative Strengths and Weaknesses</h4>
-                        <ul>
-                            <li>Mark scores ≤ 90 as normative weaknesses (W)</li>
-                            <li>Mark scores ≥ 110 as normative strengths (S)</li>
-                            <li>Scores 91-109 are average range</li>
-                            <li>Record all classifications systematically</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Identify Intra-Individual Strengths and Weaknesses</h4>
-                        <ul>
-                            <li>Use cognitive composite (e.g., FSIQ, GAI) as predictor OR calculate cross-battery mean</li>
-                            <li>Calculate discrepancy: Obtained Score - Predicted Score</li>
-                            <li>Apply critical value for significance (typically 12-15 points)</li>
-                            <li>Mark significant positive discrepancies as intra-individual strengths</li>
-                            <li>Mark significant negative discrepancies as intra-individual weaknesses</li>
-                        </ul>
-                        <div class="info-box" style="margin-top: 15px;">
-                            <strong>Recommended:</strong> Use the PPA software or published discrepancy tables that account for reliability coefficients and standard error of measurement.
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <h4>Identify DEFICITS and ASSETS</h4>
-                        <ul>
-                            <li><strong>DEFICIT (D):</strong> BOTH normative weakness (≤90) AND intra-individual weakness</li>
-                            <li><strong>ASSET (A):</strong> BOTH normative strength (≥110) AND intra-individual strength</li>
-                            <li>Note: Average range scores (90-109) can serve as strengths if not intra-individual weaknesses</li>
-                            <li>Pattern requires at least one deficit AND at least one strength/asset</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Verify Research-Based Relationships</h4>
-                        <ul>
-                            <li>Consult the Process-Academic Correlation table below.</li>
-                            <li>Verify identified deficits have "Strongest" or "Strong" relationships with academic area of concern</li>
-                            <li>If deficit has no research-based link, it cannot support SLD in that area</li>
-                            <li>Document the research basis for relationships</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Check for Consistency</h4>
-                        <ul>
-                            <li>Compare processing deficit score(s) with related academic achievement score</li>
-                            <li>Both should be similarly low (consistency)</li>
-                            <li>Processing score could be lower than achievement score</li>
-                            <li>Significant inconsistency weakens diagnostic case</li>
-                        </ul>
-                        <div class="info-box" style="margin-top: 15px;">
-                            <strong>Example of Consistency:</strong> Phonological Processing = 75, Basic Reading Skills = 72 (consistent). Phonological Processing = 75, Basic Reading Skills = 98 (inconsistent).
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <h4>Consider Interrelated Processes</h4>
-                        <ul>
-                            <li>Examine clusters of related processes</li>
-                            <li>Consider how deficits in one process may affect others</li>
-                            <li>Example: Processing Speed deficits may "pull down" Working Memory</li>
-                            <li>Neuroanatomical connections (e.g., prefrontal cortex processes)</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Apply Preponderance of Evidence</h4>
-                        <ul>
-                            <li>Integrate all data sources (testing, observations, history, interventions)</li>
-                            <li>Consider contextual factors (age, validity of assessment, administration issues)</li>
-                            <li>Professional expertise and clinical judgment</li>
-                            <li>Is it more likely true than not that student has SLD?</li>
-                            <li>Document decision-making process transparently</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Make Diagnostic Decision</h4>
-                        <ul>
-                            <li>Review all diagnostic criteria systematically</li>
-                            <li>SLD diagnosis requires: Low achievement + Processing deficit(s) + Pattern + Consistency + Research link + Exclusionary factors ruled out</li>
-                            <li>Document how each criterion was met or not met</li>
-                            <li>Use "stranger test" - could someone unfamiliar with criteria understand your decision?</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Plan Interventions Based on Processing Profile</h4>
-                        <ul>
-                            <li>Identify specific processing deficits to target</li>
-                            <li>Select evidence-based interventions for identified deficits</li>
-                            <li>Leverage processing strengths in instruction</li>
-                            <li>Include recommendations for accommodations</li>
-                            <li>Develop IEP goals addressing both academic skills and underlying processes</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="info-box success">
-                    <h3>Documentation Requirements</h3>
-                    <ul>
-                        <li>Complete analysis table showing all processing scores, discrepancies, and classifications</li>
-                        <li>Clear explanation of how deficits were identified</li>
-                        <li>Research citations linking processes to academic areas</li>
-                        <li>Narrative describing the pattern of strengths and weaknesses</li>
-                        <li>Explanation of consistency between processing and achievement</li>
-                        <li>Discussion of preponderance of evidence</li>
-                        <li>Clear diagnostic statement and rationale</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="correlations" class="section">
-                <h2>Psychological Process-Academic Correlations</h2>
-
-                <div class="info-box">
-                    <h3>Using This Information</h3>
-                    <p><strong>Before Assessment:</strong> Use this table to guide selection of processing areas to assess based on academic concerns.</p>
-                    <p><strong>After Assessment:</strong> Use this table to determine whether any identified areas of weakness correlate with the academic area of concern.</p>
-                </div>
-
-                <div class="card-grid">
-                    <div class="correlation-card">
-                        <h3>📖 Basic Reading Skills (Decoding)</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>Phonological Processing (PP)</li>
-                                <li>Crystallized Intelligence (Gc)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                                <li>Processing Speed (PS)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Oral Language (OL)</li>
-                                <li>Orthographic Processing (OP)</li>
-                                <li>Phonological Processing (PP)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>⚡ Reading Fluency</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                                <li>Processing Speed (PS)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Orthographic Processing (OP)</li>
-                                <li>Phonological Processing (PP)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>📚 Reading Comprehension</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Crystallized Intelligence (Gc)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Executive Function (EF)</li>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Executive Functions (EF)</li>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Oral Language (OL)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>🔢 Mathematics Calculation</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Attention (AT)</li>
-                                <li>Executive Function (EF)</li>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Visual-Spatial Processing (VSP)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Attention (AT)</li>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                                <li>Visual-Spatial Long-Term Recall (VSLTR)</li>
-                                <li>Visual-Spatial Processing (VSP)</li>
-                                <li>Visual-Spatial Working Memory (VSWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>🧮 Mathematics Problem Solving</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Crystallized Intelligence (Gc)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Executive Function (EF)</li>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Visual-Spatial Processing (VSP)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Executive Functions (EF)</li>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Oral Language (OL)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                                <li>Visual-Spatial Long-Term Recall (VSLTR)</li>
-                                <li>Visual-Spatial Working Memory (VSWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>✍️ Written Expression</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Crystallized Intelligence (Gc)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Attention (AT)</li>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Executive Function (EF)</li>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                                <li>Processing Speed (PS)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Executive Functions (EF)</li>
-                                <li>Fine Motor (FM)</li>
-                                <li>Fluid Reasoning (FR)</li>
-                                <li>Oral Language (OL)</li>
-                                <li>Phonological Processing (PP)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>🗣️ Oral Expression</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>No Strongest Influence</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Executive Function (EF)</li>
-                                <li>Long-Term Retrieval (VLTR)</li>
-                                <li>Crystallized Intelligence (Gc)</li>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Executive Functions (EF)</li>
-                                <li>Oral Language (OL)</li>
-                                <li>Phonological Processing (PP)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Long-Term Recall (VLTR)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="correlation-card">
-                        <h3>👂 Listening Comprehension</h3>
-                        
-                        <div class="correlation-section">
-                            <h5>Strongest Influence</h5>
-                            <ul>
-                                <li>No Strongest Influence</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Strong Influence</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Executive Function (EF)</li>
-                                <li>Crystallized Intelligence (Gc)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Short-Term Memory (VWM)</li>
-                            </ul>
-                        </div>
-
-                        <div class="correlation-section">
-                            <h5>Dehn's 14-Process Model</h5>
-                            <ul>
-                                <li>Auditory Processing (AP)</li>
-                                <li>Executive Functions (EF)</li>
-                                <li>Oral Language (OL)</li>
-                                <li>Phonological Processing (PP)</li>
-                                <li>Processing Speed (PS)</li>
-                                <li>Verbal Working Memory (VWM)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-box warning">
-                    <h3>Important Notes</h3>
-                    <ul>
-                        <li>All processing areas have SOME relationship with academic skills, but those listed show the strongest correlations.</li>
-                        <li>A deficit must have a strong research-based relation to the academic area to support SLD diagnosis</li>
-                        <li>Example: Phonological Processing deficit supports Basic Reading SLD but NOT Math Problem Solving SLD</li>
-                        <li>When conducting assessment, evaluate processing areas with highest influence regardless of method used.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="ppa" class="section">
-                <h2>Psychological Processing Analyzer (PPA) Software</h2>
-
-                <div class="info-box">
-                    <h3>What is the PPA?</h3>
-                    <p>The Psychological Processing Analyzer (PPA) is specialized software developed by Milton J. Dehn to facilitate the statistical analysis of cross-battery test scores and assist with SLD identification using the PSW approach.</p>
-                </div>
-
-                <h3>Key Features</h3>
-                <div class="card-grid">
-                    <div class="card">
-                        <h4>📊 Statistical Analysis</h4>
-                        <p>Identifies statistically significant intra-individual strengths and weaknesses among 14 cognitive processes and 8 areas of achievement.</p>
-                    </div>
-
-                    <div class="card">
-                        <h4>🔗 Consistency Checking</h4>
-                        <p>Compares cognitive processing weaknesses with closely related areas of deficient achievement automatically.</p>
-                    </div>
-
-                    <div class="card">
-                        <h4>📚 Multi-Battery Support</h4>
-                        <p>Analyzes scores from more than 80 different test batteries for selective, cross-battery testing.</p>
-                    </div>
-
-                    <div class="card">
-                        <h4>📝 Comprehensive Reports</h4>
-                        <p>Generates reports with tables, charts, statistical analyses, narrative, recommended SLD categories, observations, and intervention recommendations.</p>
-                    </div>
-                </div>
-
-                <h3>What the PPA Analyzes</h3>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Component</th>
-                                <th>What It Does</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>14 Psychological Processes</strong></td>
-                                <td>AT, AP, EF, FM, FR, VLTR, VSLTR, OL, PP, PS, VSP, OP, VWM, VSWM</td>
-                            </tr>
-                            <tr>
-                                <td><strong>8 SLD Achievement Areas</strong></td>
-                                <td>Oral Expression, Listening Comprehension, Basic Reading, Reading Fluency, Reading Comprehension, Math Calculation, Math Problem Solving, Written Expression</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Intra-Individual Analysis</strong></td>
-                                <td>Compares each process to predicted score based on cognitive ability or mean</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Consistency Analysis</strong></td>
-                                <td>Identifies alignment between processing weaknesses and related achievement deficits</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Research-Based Links</strong></td>
-                                <td>Built-in correlation data between processes and academic areas</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3>PPA Workflow</h3>
-                <div class="steps-container">
-                    <div class="step">
-                        <h4>Enter Test Scores</h4>
-                        <ul>
-                            <li>Select from 80+ supported test batteries</li>
-                            <li>Enter composite and subtest scores</li>
-                            <li>Can enter unlisted scores manually</li>
-                            <li>Includes tests administered in Spanish</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Choose Analysis Options</h4>
-                        <ul>
-                            <li>Select cognitive ability composite for predictor (recommended)</li>
-                            <li>Or use cross-battery mean</li>
-                            <li>Set significance level for discrepancies</li>
-                            <li>Optional PSW analysis of achievement scores</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Review Statistical Analysis</h4>
-                        <ul>
-                            <li>Tables showing all scores, predicted scores, and discrepancies</li>
-                            <li>Identification of significant strengths and weaknesses</li>
-                            <li>Visual graphs of processing profile</li>
-                            <li>Consistency analysis results</li>
-                        </ul>
-                    </div>
-
-                    <div class="step">
-                        <h4>Generate Report</h4>
-                        <ul>
-                            <li>Comprehensive narrative report</li>
-                            <li>Recommended SLD categories (if criteria met)</li>
-                            <li>Classroom observations section</li>
-                            <li>Intervention recommendations for processing weaknesses</li>
-                            <li>Editable and savable</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>Benefits of Using PPA</h3>
-                <div class="info-box success">
-                    <ul>
-                        <li><strong>Accuracy:</strong> Eliminates calculation errors in complex statistical analyses</li>
-                        <li><strong>Efficiency:</strong> Saves hours of manual calculations and table lookups</li>
-                        <li><strong>Defensibility:</strong> Uses published psychometric properties and standardized criteria</li>
-                        <li><strong>Comprehensive:</strong> Analyzes both processing and achievement in one place</li>
-                        <li><strong>Documentation:</strong> Produces professional reports meeting evaluation standards</li>
-                        <li><strong>Updates:</strong> Incorporates newest test batteries and research</li>
-                    </ul>
-                </div>
-
-                <h3>Licensing Information</h3>
-                <div class="card-grid">
-                    <div class="card">
-                        <h4>Individual License</h4>
-                        <p><strong>2-Year License</strong></p>
-                        <ul>
-                            <li>Unlimited cases and reports</li>
-                            <li>Single-user access</li>
-                            <li>Software updates included</li>
-                        </ul>
-                    </div>
-
-                    <div class="card">
-                        <h4>Site License</h4>
-                        <p><strong>5-Year License</strong></p>
-                        <ul>
-                            <li>Unlimited cases and reports</li>
-                            <li>Multiple users at one site</li>
-                            <li>Software updates included</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="info-box warning">
-                    <h3>Important Considerations</h3>
-                    <ul>
-                        <li><strong>Professional Judgment Required:</strong> PPA provides statistical analysis, but professional expertise is needed for interpretation and diagnosis</li>
-                        <li><strong>Not a Diagnostic Tool:</strong> PPA assists with analysis; evaluator makes final diagnostic decisions</li>
-                        <li><strong>Context Matters:</strong> Statistical findings must be interpreted within student's complete history and evaluation data</li>
-                        <li><strong>Training Recommended:</strong> Understanding of Dehn's model and cross-battery assessment is essential</li>
-                    </ul>
-                </div>
-
-                <h3>Resources for Learning More</h3>
-                <div class="accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>Purchase and Information</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>Schoolhouse Educational Services, Inc.</strong></p>
-                            <p>Website: www.schoolhouseeducationalservices.com</p>
-                            <p>The PPA information page includes pricing, features, and purchasing options for individual and site licenses.</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>Training and Webinars</span>
-                        </div>
-                        <div class="accordion-content">
-                            <ul>
-                                <li><strong>Using PSW to Determine SLD</strong> - Recorded webinar available</li>
-                                <li><strong>Understanding the Dual Discrepancy/Consistency Model</strong> - Free webinar</li>
-                                <li><strong>Update on the PPA</strong> - Free webinar on latest features</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <span>Essential Reading</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>Dehn, M. J. (2022). Essentials of Processing Assessment, 3rd Edition.</strong> John Wiley & Sons.</p>
-                            <p>This is the definitive guide to Dehn's model and provides comprehensive information on:</p>
-                            <ul>
-                                <li>Theoretical foundations of processing assessment</li>
-                                <li>Detailed descriptions of all 14 processes</li>
-                                <li>Step-by-step procedures for cross-battery analysis</li>
-                                <li>Diagnostic decision-making guidelines</li>
-                                <li>Evidence-based interventions for processing deficits</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <h3>Alternative to PPA: Manual Analysis</h3>
-                    <p>While the PPA greatly facilitates analysis, evaluators can conduct Dehn's PSW analysis manually by:</p>
-                    <ul>
-                        <li>Converting all scores to common metric (SS with M=100, SD=15)</li>
-                        <li>Calculating discrepancies from cognitive composite or mean</li>
-                        <li>Using published tables for critical values (accounting for reliability)</li>
-                        <li>Consulting Process-Academic correlation tables</li>
-                        <li>Systematically documenting all analyses</li>
-                    </ul>
-                    <p><em>Manual analysis requires more time but follows the same principles as the PPA.</em></p>
-                </div>
-            </section>
-
-            <section id="quiz" class="section">
-                <h2>Knowledge Check Quiz</h2>
-
-                <div class="info-box">
-                    <p>Test your understanding of Dehn's PSW model with this interactive quiz. Select your answer for each question, then click "Check Answer" to see if you're correct.</p>
-                </div>
-
-                <div class="quiz-container">
-                    <div class="quiz-question active" data-question="1">
-                        <h3>Question 1 of 10</h3>
-                        <p><strong>What defines a "deficit" in Dehn's model?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">A score below 85</div>
-                            <div class="quiz-option" data-answer="wrong">An intra-individual weakness only</div>
-                            <div class="quiz-option" data-answer="correct">Both below average AND an intra-individual weakness</div>
-                            <div class="quiz-option" data-answer="wrong">Any score more than 1 SD below the mean</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(1)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="2">
-                        <h3>Question 2 of 10</h3>
-                        <p><strong>How many psychological processes are included in Dehn's model?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">7 CHC broad abilities</div>
-                            <div class="quiz-option" data-answer="wrong">10 processes</div>
-                            <div class="quiz-option" data-answer="correct">14 processes</div>
-                            <div class="quiz-option" data-answer="wrong">8 achievement areas</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(2)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="3">
-                        <h3>Question 3 of 10</h3>
-                        <p><strong>Which process has the STRONGEST correlation with Basic Reading Skills?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">Processing Speed</div>
-                            <div class="quiz-option" data-answer="correct">Phonological Processing</div>
-                            <div class="quiz-option" data-answer="wrong">Working Memory</div>
-                            <div class="quiz-option" data-answer="wrong">Auditory Processing</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(3)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="4">
-                        <h3>Question 4 of 10</h3>
-                        <p><strong>What is required to establish a Pattern of Strengths and Weaknesses?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">Only processing weaknesses</div>
-                            <div class="quiz-option" data-answer="correct">At least one deficit AND at least one strength</div>
-                            <div class="quiz-option" data-answer="wrong">All processes must be below average</div>
-                            <div class="quiz-option" data-answer="wrong">At least three processing deficits</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(4)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="5">
-                        <h3>Question 5 of 10</h3>
-                        <p><strong>What does "consistency" mean in Dehn's model?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="correct">Processing deficit score and related academic score are both similarly low</div>
-                            <div class="quiz-option" data-answer="wrong">All processing scores are at the same level</div>
-                            <div class="quiz-option" data-answer="wrong">Assessment results are reliable</div>
-                            <div class="quiz-option" data-answer="wrong">Student performs consistently across all subjects</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(5)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="6">
-                        <h3>Question 6 of 10</h3>
-                        <p><strong>When can the more lenient achievement criterion (SS ≤ 85) be used?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">Whenever the evaluator prefers</div>
-                            <div class="quiz-option" data-answer="correct">When preponderance of evidence indicates likely SLD</div>
-                            <div class="quiz-option" data-answer="wrong">For all high-IQ students</div>
-                            <div class="quiz-option" data-answer="wrong">Never - must always use SS ≤ 78</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(6)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="7">
-                        <h3>Question 7 of 10</h3>
-                        <p><strong>What is the purpose of checking subtest score unity/cohesiveness?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">To calculate the mean score</div>
-                            <div class="quiz-option" data-answer="correct">To ensure the composite validly represents the process</div>
-                            <div class="quiz-option" data-answer="wrong">To identify test administration errors</div>
-                            <div class="quiz-option" data-answer="wrong">To determine if retesting is needed</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(7)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="8">
-                        <h3>Question 8 of 10</h3>
-                        <p><strong>Which processes form the "Executive Functions Cluster"?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">EF, PS, VLTR, VSP</div>
-                            <div class="quiz-option" data-answer="correct">EF, AT, VWM, FR</div>
-                            <div class="quiz-option" data-answer="wrong">EF, OL, AP, PP</div>
-                            <div class="quiz-option" data-answer="wrong">EF, Gc, Gf, Gs</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(8)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="9">
-                        <h3>Question 9 of 10</h3>
-                        <p><strong>What software is specifically designed for Dehn's PSW analysis?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">Q-Global</div>
-                            <div class="quiz-option" data-answer="correct">Psychological Processing Analyzer (PPA)</div>
-                            <div class="quiz-option" data-answer="wrong">WISC-V Q-Interactive</div>
-                            <div class="quiz-option" data-answer="wrong">Cross-Battery Assessment Software (XBA)</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(9)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-question" data-question="10">
-                        <h3>Question 10 of 10</h3>
-                        <p><strong>What must be ruled out before diagnosing SLD?</strong></p>
-                        <div class="quiz-options">
-                            <div class="quiz-option" data-answer="wrong">Processing strengths</div>
-                            <div class="quiz-option" data-answer="wrong">Average intelligence</div>
-                            <div class="quiz-option" data-answer="correct">Exclusionary factors (lack of instruction, sensory issues, cultural factors, etc.)</div>
-                            <div class="quiz-option" data-answer="wrong">Intra-individual weaknesses</div>
-                        </div>
-                        <button class="quiz-button" onclick="checkAnswer(10)">Check Answer</button>
-                        <div class="quiz-result"></div>
-                    </div>
-
-                    <div class="quiz-navigation">
-                        <button class="quiz-button" onclick="previousQuestion()">Previous</button>
-                        <button class="quiz-button" onclick="nextQuestion()">Next</button>
-                        <button class="quiz-button btn-secondary" onclick="resetQuiz()" style="display:none;" id="resetBtn">Restart Quiz</button>
-                    </div>
-
-                    <div class="progress-tracker" style="margin-top: 30px;">
-                        <h4>Quiz Progress</h4>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="quizProgress" style="width: 0%;">0%</div>
-                        </div>
-                        <p id="scoreDisplay">Score: 0 / 0</p>
-                    </div>
-                </div>
-            </section>
-        </div>
+<div class="container">
+<div class="header">
+<h1>🧠 Concordance-Discordance Model (C-DM) Calculator</h1>
+<p>Statistical Analysis for Specific Learning Disability (SLD) Identification</p>
+<p style="font-size: 0.85em; margin-top: 10px;">Based on Hale, Wycoff, & Fiorello (2010) - Part of the Cognitive Hypothesis Testing (CHT) Framework</p>
+</div>
+<div class="content">
+<!-- Tab Navigation -->
+<div class="tabs">
+<button class="tab active" onclick="switchTab('calculator')">📊 Calculator</button>
+<button class="tab" onclick="switchTab('background')">📚 Background & Theory</button>
+<button class="tab" onclick="switchTab('guidance')">📖 Clinical Guidance</button>
+</div>
+<!-- Calculator Tab -->
+<div id="calculator" class="tab-content active">
+<div class="dont-forget-box">
+<h4>💡 DON'T FORGET</h4>
+<p><strong>Learning Delay vs. Learning Deficit:</strong> The difference between a child with low achievement (learning delay) and a child with specific learning disability (learning deficit) is particularly relevant for SLD classification and service delivery. If a child has a learning <strong>delay</strong>, then a more intensive instructional approach can be used, because they learn similarly to others but need more instruction. If a child has a learning <strong>deficit</strong>, then a more individualized instructional approach is needed, because they learn differently than others and need instruction designed to meet their unique needs.</p>
+</div>
+<div class="info-box">
+<h3>📖 About the C-DM Method</h3>
+<p>The Concordance-Discordance Model uses statistical analysis to identify Specific Learning Disabilities by comparing cognitive strengths, cognitive weaknesses, and achievement deficits. This is part of the Cognitive Hypothesis Testing (CHT) approach that emphasizes comprehensive evaluation for children who do not respond to RTI (Response to Intervention). The C-DM addresses IDEA statutory and regulatory requirements by examining patterns of processing strengths and weaknesses.</p>
+</div>
+<div class="caution-box">
+<h4>⚠️ CAUTION</h4>
+<p>The C-DM approach for SLD identification requires careful evaluation of cognitive strengths, deficits, and associated achievement deficits to ensure <strong>ecological validity</strong> of findings. It is inappropriate to just choose the highest cognitive score, the lowest cognitive score, and the lowest achievement score, and then see if they are significantly different. This strictly numerical approach will lead to poor diagnostic and intervention decisions. <strong>Clinical significance and ecological validity must accompany statistical significance.</strong></p>
+</div>
+<div class="formula-box">
+    <p style="margin-bottom: 10px; color: #856404;"><strong>Formula for Standard Error of Difference (SED):</strong></p>
+    <code>SED = SD × √[2 - (r₁ + r₂)]</code>
+    <p style="margin-top: 10px; font-size: 0.9em; color: #856404;">
+        Critical Value = SED × Z-score<br>
+        (Z-score: 1.96 for p < .05; 2.58 for p < .01)
+    </p>
+</div>
+<div class="steps-guide">
+<h3>📋 C-DM as Part of Comprehensive Evaluation (Steps 5-7 of 8)</h3>
+<p style="margin-bottom: 15px;"><strong>Prerequisites (Steps 1-4):</strong> Before using this calculator, ensure you have:</p>
+<ol>
+<li><strong>Step 1:</strong> Determined cognitive profile shows sufficient variability (not consistent across all subtests)</li>
+<li><strong>Step 2:</strong> Confirmed achievement deficit through standardized testing, RTI data, classroom work, and teacher reports</li>
+<li><strong>Step 3:</strong> Reviewed literature to ensure cognitive deficit is empirically associated with achievement deficit</li>
+<li><strong>Step 4:</strong> Obtained reliability coefficients from test manuals</li>
+</ol>
+<p style="margin-top: 15px; margin-bottom: 15px;"><strong>This Calculator Performs Steps 5-7:</strong></p>
+<ol start="5">
+<li><strong>Step 5:</strong> Calculate discordance between cognitive strength and weakness</li>
+<li><strong>Step 6:</strong> Calculate discordance between cognitive strength and achievement deficit</li>
+<li><strong>Step 7:</strong> Calculate concordance between cognitive weakness and achievement deficit</li>
+</ol>
+<p style="margin-top: 15px;"><strong>After calculation, proceed to Step 8:</strong> Determine ecological validity with team consensus using all evaluation data (RTI, observations, work samples, etc.)</p>
+</div>
+<!-- Input Section -->
+<div class="section">
+<h2><span class="step-indicator">5</span>Enter Test Scores (Standard Scores)</h2>
+<div class="input-row">
+<div class="input-group">
+<label for="cogStrength">Cognitive Strength Score:</label>
+<input type="number" id="cogStrength" placeholder="e.g., 110" min="40" max="160" step="1">
+<p class="help-text">Highest cognitive ability (e.g., VCI, PRI, Gf, Gc)</p>
+</div>
+<div class="input-group">
+<label for="cogWeakness">Cognitive Weakness Score:</label>
+<input type="number" id="cogWeakness" placeholder="e.g., 85" min="40" max="160" step="1">
+<p class="help-text">Lowest cognitive ability (e.g., WMI, PSI, Gsm, Gs)</p>
+</div>
+<div class="input-group">
+<label for="achDeficit">Achievement Deficit Score:</label>
+<input type="number" id="achDeficit" placeholder="e.g., 82" min="40" max="160" step="1">
+<p class="help-text">Low achievement area (must be empirically linked to cognitive deficit)</p>
+</div>
+</div>
+</div>
+<!-- Reliability Section -->
+<div class="section">
+<h2><span class="step-indicator">6</span>Enter Reliability Coefficients</h2>
+<div class="caution-box">
+<h4>📘 Finding Reliability Coefficients</h4>
+<p>These values come from test technical manuals (look for "coefficient alpha" or "internal consistency"). Typical values: 0.80-0.98. <strong>Note:</strong> If using subtest combinations to create new factor scores (e.g., ACID profile, custom Gf composite), you must calculate new reliability coefficients using Fisher's z-transformation (see Hale, Fiorello et al., 2008).</p>
+</div>
+<div class="input-row">
+<div class="input-group">
+<label for="relCogStrength">Reliability - Cognitive Strength (r₁):</label>
+<input type="number" id="relCogStrength" placeholder="e.g., 0.92" min="0.50" max="0.99" step="0.01">
+<p class="help-text">From test manual (coefficient alpha)</p>
+</div>
+<div class="input-group">
+<label for="relCogWeakness">Reliability - Cognitive Weakness (r₂):</label>
+<input type="number" id="relCogWeakness" placeholder="e.g., 0.88" min="0.50" max="0.99" step="0.01">
+<p class="help-text">From test manual (coefficient alpha)</p>
+</div>
+<div class="input-group">
+<label for="relAchDeficit">Reliability - Achievement Deficit (r₃):</label>
+<input type="number" id="relAchDeficit" placeholder="e.g., 0.90" min="0.50" max="0.99" step="0.01">
+<p class="help-text">From test manual (coefficient alpha)</p>
+</div>
+</div>
+</div>
+<!-- Settings Section -->
+<div class="section">
+<h2><span class="step-indicator">7</span>Analysis Settings</h2>
+<div class="input-row">
+<div class="input-group">
+<label for="sd">Standard Deviation (SD):</label>
+<input type="number" id="sd" value="15" min="1" max="30" step="0.1">
+<p class="help-text">Typically 15 for most tests (WISC, WIAT, WJ)</p>
+</div>
+<div class="input-group">
+<label for="significance">Significance Level:</label>
+<select id="significance">
+<option value="1.96">p < .05 (1.96) - Standard</option>
+<option value="2.58">p < .01 (2.58) - Stringent</option>
+</select>
+<p class="help-text">Most practitioners use p < .05</p>
+</div>
+<div class="input-group">
+<label for="achArea">Achievement Area (Optional):</label>
+<select id="achArea">
+<option value="">Select area...</option>
+<option value="Reading - Basic Reading Skills">Reading - Basic Reading Skills</option>
+<option value="Reading - Reading Fluency">Reading - Reading Fluency</option>
+<option value="Reading - Reading Comprehension">Reading - Reading Comprehension</option>
+<option value="Mathematics - Math Calculation">Mathematics - Math Calculation</option>
+<option value="Mathematics - Math Problem Solving">Mathematics - Math Problem Solving</option>
+<option value="Written Expression - Spelling">Written Expression - Spelling</option>
+<option value="Written Expression - Writing Fluency">Written Expression - Writing Fluency</option>
+<option value="Written Expression - Written Expression">Written Expression - Written Expression</option>
+<option value="Oral Language - Listening Comprehension">Oral Language - Listening Comprehension</option>
+<option value="Oral Language - Oral Expression">Oral Language - Oral Expression</option>
+</select>
+<p class="help-text">For report purposes</p>
+</div>
+</div>
+</div>
+<!-- Buttons -->
+<div class="button-group">
+<button class="btn btn-primary" onclick="calculateCDM()">🔢 Calculate C-DM Analysis</button>
+<button class="btn btn-info" onclick="loadExample()">📝 Load Example Data</button>
+<button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
+</div>
+<!-- Results Section -->
+<div class="results" id="results">
+<div class="section">
+<h2>📊 C-DM Analysis Results</h2>
+<!-- Step 5 -->
+<div class="result-card">
+<h3><span class="step-indicator">5</span>Step 5: Discordance - Cognitive Strength vs. Cognitive Weakness</h3>
+<div class="result-item">
+<span class="result-label">Cognitive Strength Score:</span>
+<span class="result-value" id="result-cogStrength"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Cognitive Weakness Score:</span>
+<span class="result-value" id="result-cogWeakness"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Difference:</span>
+<span class="result-value" id="result-diff1"></span>
+</div>
+<div class="result-item">
+<span class="result-label">SED:</span>
+<span class="result-value" id="result-sed1"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Critical Value:</span>
+<span class="result-value" id="result-critical1"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Result:</span>
+<span class="result-value" id="result-sig1"></span>
+</div>
+<div class="interpretation">
+<strong>Interpretation:</strong>
+<span id="interp1"></span>
+</div>
+</div>
+<!-- Step 6 -->
+<div class="result-card">
+<h3><span class="step-indicator">6</span>Step 6: Discordance - Cognitive Strength vs. Achievement Deficit</h3>
+<div class="result-item">
+<span class="result-label">Cognitive Strength Score:</span>
+<span class="result-value" id="result-cogStrength2"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Achievement Deficit Score:</span>
+<span class="result-value" id="result-achDeficit2"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Difference:</span>
+<span class="result-value" id="result-diff2"></span>
+</div>
+<div class="result-item">
+<span class="result-label">SED:</span>
+<span class="result-value" id="result-sed2"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Critical Value:</span>
+<span class="result-value" id="result-critical2"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Result:</span>
+<span class="result-value" id="result-sig2"></span>
+</div>
+<div class="interpretation">
+<strong>Interpretation:</strong>
+<span id="interp2"></span>
+</div>
+</div>
+<!-- Step 7 -->
+<div class="result-card">
+<h3><span class="step-indicator">7</span>Step 7: Concordance - Cognitive Weakness vs. Achievement Deficit</h3>
+<div class="result-item">
+<span class="result-label">Cognitive Weakness Score:</span>
+<span class="result-value" id="result-cogWeakness3"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Achievement Deficit Score:</span>
+<span class="result-value" id="result-achDeficit3"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Difference:</span>
+<span class="result-value" id="result-diff3"></span>
+</div>
+<div class="result-item">
+<span class="result-label">SED:</span>
+<span class="result-value" id="result-sed3"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Critical Value:</span>
+<span class="result-value" id="result-critical3"></span>
+</div>
+<div class="result-item">
+<span class="result-label">Result:</span>
+<span class="result-value" id="result-sig3"></span>
+</div>
+<div class="interpretation">
+<strong>Interpretation:</strong>
+<span id="interp3"></span>
+</div>
+</div>
+<!-- Final Conclusion -->
+<div class="conclusion" id="conclusion">
+<h3>🎯 C-DM Statistical Pattern Results</h3>
+<p id="finalConclusion"></p>
+<div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(0,0,0,0.1);">
+<p style="font-size: 0.9em;"><strong>Step 8 - Next Steps:</strong> <span id="nextSteps"></span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- Background & Theory Tab -->
+<div id="background" class="tab-content">
+<div class="section">
+<h2>📚 Theoretical Background</h2>
+<div class="theory-section">
+<h4>The Balanced Practice Model (Hale, 2006)</h4>
+<p style="margin-bottom: 15px;">The C-DM is part of a comprehensive three-tier model:</p>
+<ul>
+<li><strong>Tier 1:</strong> Standard Protocol RTI (~85% of children) - Universal screening and evidence-based instruction</li>
+<li><strong>Tier 2:</strong> Problem-Solving RTI (~10% of children) - Individualized interventions for nonresponders</li>
+<li><strong>Tier 3:</strong> Comprehensive Evaluation + Specialized Services (~5% of children) - For chronic nonresponders, includes C-DM analysis to determine SLD vs. other disorders</li>
+</ul>
+</div>
+<div class="dont-forget-box">
+<h4>💡 The Learning Disabilities Roundtable (2002, 2004)</h4>
+<p>"The identification of a core cognitive deficit, or a disorder in one or more of the basic psychological processes, predictive of an imperfect ability to learn, is a marker for an SLD" and "also acknowledges intra-individual differences as a fundamental concept of SLD."</p>
+</div>
+
+<!-- NEW STATISTICAL FORMULA DETAIL SECTION -->
+<div class="theory-section">
+    <h4>Statistical Foundations: SED and Critical Values</h4>
+    <p>The Concordance-Discordance Model (C-DM) relies on calculating the **Standard Error of Difference (SED)** to determine if the magnitude of the difference between two scores is statistically significant, meaning the difference is unlikely to be due to measurement error alone.</p>
+    
+    <p style="margin-top: 15px;"><strong>Standard Error of Difference (SED):</strong></p>
+    <p>The SED represents the standard deviation of the distribution of differences between two scores, accounting for both the overall test scale (SD) and the reliability of the measures ($r_1$ and $r_2$).</p>
+    <div style="text-align: center; margin: 10px 0;">
+        <code>SED = SD × √[2 - (r₁ + r₂)]</code>
     </div>
+    <ul style="margin-left: 20px;">
+        <li><strong>SD:</strong> Standard Deviation of the measure (e.g., 15 for most standard score tests like WISC, WIAT).</li>
+        <li><strong>r₁:</strong> Reliability coefficient (e.g., coefficient alpha) of the first test score.</li>
+        <li><strong>r₂:</strong> Reliability coefficient (e.g., coefficient alpha) of the second test score.</li>
+    </ul>
+    
+    <p style="margin-top: 15px;"><strong>Critical Value (CV):</strong></p>
+    <p>The Critical Value is the minimum absolute difference required between two scores for that difference to be considered statistically significant at the selected probability level. It is calculated by multiplying the SED by the Z-score corresponding to the chosen level of significance.</p>
+    <div style="text-align: center; margin: 10px 0;">
+        <code>Critical Value = SED × Z-score</code>
+    </div>
+    <ul style="margin-left: 20px;">
+        <li><strong>Z-score (1.96):</strong> Corresponds to the 95% Confidence Interval (p &lt; .05).</li>
+        <li><strong>Z-score (2.58):</strong> Corresponds to the 99% Confidence Interval (p &lt; .01).</li>
+    </ul>
+    <p style="margin-top: 15px;">**Decision Rule:** The observed difference between two scores is deemed significant if $\lvert\text{Score A} - \text{Score B}\rvert \ge \text{Critical Value}$.</p>
+</div>
+<!-- END NEW STATISTICAL FORMULA DETAIL SECTION -->
 
-    <footer>
-        <div class="container">
-            <p><strong>Dehn's PSW Model Learning Guide</strong></p>
-            <p>Based on resources from Idaho Department of Education and Dr. Milton J. Dehn's research</p>
-            <p>© 2024 - For Educational and Professional Development Purposes</p>
-            <p style="margin-top: 15px; font-size: 0.9em;">
-                <strong>Key References:</strong><br>
-                Dehn, M. J. (2022). Essentials of Processing Assessment, 3rd Edition. John Wiley & Sons.<br>
-                Idaho Special Education Manual - Psychological Processing Assessment Guide (2024)<br>
-                Preponderance of Evidence Guidance Document - Idaho Department of Education
-            </p>
-        </div>
-    </footer>
-
-    <script>
-        // Section Navigation
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Remove active class from all buttons
-            document.querySelectorAll('nav button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Accordion functionality
-        function toggleAccordion(header) {
-            const item = header.parentElement;
-            const content = item.querySelector('.accordion-content');
-            const isActive = header.classList.contains('active');
-            
-            // Close all accordions in this section
-            const allHeaders = header.closest('.accordion').querySelectorAll('.accordion-header');
-            const allContents = header.closest('.accordion').querySelectorAll('.accordion-content');
-            
-            allHeaders.forEach(h => h.classList.remove('active'));
-            allContents.forEach(c => c.classList.remove('active'));
-            
-            // Toggle current accordion
-            if (!isActive) {
-                header.classList.add('active');
-                content.classList.add('active');
-            }
-        }
-
-        // Quiz functionality
-        let currentQuestion = 1;
-        let correctAnswers = 0;
-        let answeredQuestions = 0;
-        const totalQuestions = 10;
-
-        function checkAnswer(questionNum) {
-            const question = document.querySelector(`.quiz-question[data-question="${questionNum}"]`);
-            const selectedOption = question.querySelector('.quiz-option.selected');
-            const result = question.querySelector('.quiz-result');
-            
-            if (!selectedOption) {
-                result.innerHTML = '<p style="color: var(--warning-color);">⚠️ Please select an answer first.</p>';
-                result.style.display = 'block';
-                return;
-            }
-            
-            const isCorrect = selectedOption.dataset.answer === 'correct';
-            
-            // Disable further selection
-            question.querySelectorAll('.quiz-option').forEach(opt => {
-                opt.style.pointerEvents = 'none';
-                if (opt.dataset.answer === 'correct') {
-                    opt.classList.add('correct');
-                } else if (opt.classList.contains('selected') && !isCorrect) {
-                    opt.classList.add('incorrect');
-                }
-            });
-            
-            // Show result
-            if (isCorrect) {
-                result.innerHTML = '<p style="color: var(--success-color); font-weight: bold;">✓ Correct! Well done.</p>';
-                correctAnswers++;
-            } else {
-                result.innerHTML = '<p style="color: var(--accent-color); font-weight: bold;">✗ Incorrect. The correct answer is highlighted in green.</p>';
-            }
-            result.style.display = 'block';
-            
-            // Update progress
-            answeredQuestions++;
-            updateProgress();
-            
-            // Hide check button
-            question.querySelector('.quiz-button').style.display = 'none';
-        }
-
-        function nextQuestion() {
-            if (currentQuestion < totalQuestions) {
-                document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`).classList.remove('active');
-                currentQuestion++;
-                document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`).classList.add('active');
-            } else if (answeredQuestions === totalQuestions) {
-                showFinalScore();
-            }
-        }
-
-        function previousQuestion() {
-            if (currentQuestion > 1) {
-                document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`).classList.remove('active');
-                currentQuestion--;
-                document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`).classList.add('active');
-            }
-        }
-
-        function updateProgress() {
-            const percentage = (answeredQuestions / totalQuestions) * 100;
-            document.getElementById('quizProgress').style.width = percentage + '%';
-            document.getElementById('quizProgress').textContent = Math.round(percentage) + '%';
-            document.getElementById('scoreDisplay').textContent = `Score: ${correctAnswers} / ${answeredQuestions} answered`;
-        }
-
-        function showFinalScore() {
-            const percentage = (correctAnswers / totalQuestions) * 100;
-            let message = '';
-            
-            if (percentage >= 90) {
-                message = '🌟 Excellent! You have mastered Dehn\'s PSW model!';
-            } else if (percentage >= 70) {
-                message = '👍 Good job! You have a solid understanding of the model.';
-            } else if (percentage >= 50) {
-                message = '📚 Not bad, but review the materials for better understanding.';
-            } else {
-                message = '📖 Consider reviewing the guide more thoroughly.';
-            }
-            
-            alert(`Quiz Complete!\n\nYour Score: ${correctAnswers} / ${totalQuestions} (${Math.round(percentage)}%)\n\n${message}`);
-            document.getElementById('resetBtn').style.display = 'inline-block';
-        }
-
-        function resetQuiz() {
-            currentQuestion = 1;
-            correctAnswers = 0;
-            answeredQuestions = 0;
-            
-            document.querySelectorAll('.quiz-question').forEach((q, index) => {
-                q.classList.remove('active');
-                if (index === 0) q.classList.add('active');
-                
-                q.querySelectorAll('.quiz-option').forEach(opt => {
-                    opt.classList.remove('selected', 'correct', 'incorrect');
-                    opt.style.pointerEvents = 'auto';
-                });
-                
-                q.querySelector('.quiz-result').style.display = 'none';
-                q.querySelector('.quiz-button').style.display = 'inline-block';
-            });
-            
-            updateProgress();
-            document.getElementById('resetBtn').style.display = 'none';
-        }
-
-        // Quiz option selection
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.quiz-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const question = this.closest('.quiz-question');
-                    question.querySelectorAll('.quiz-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                });
-            });
-
-            // Save checklist state
-            document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const label = this.nextElementSibling;
-                    if (this.checked) {
-                        label.style.textDecoration = 'line-through';
-                        label.style.opacity = '0.6';
-                    } else {
-                        label.style.textDecoration = 'none';
-                        label.style.opacity = '1';
-                    }
-                });
-            });
-        });
-
-        // Print functionality
-        function printGuide() {
-            window.print();
-        }
-
-        // Smooth scrolling for internal links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+<div class="theory-section">
+<h4>Why C-DM Over Ability-Achievement Discrepancy?</h4>
+<p style="margin-bottom: 10px;">Traditional discrepancy methods are problematic because they:</p>
+<ul>
+<li>Do not discriminate well between low achievers and children with SLD</li>
+<li>Are applied inconsistently across districts and states</li>
+<li>Lead to overidentification of minority students</li>
+<li>Use arbitrary cutoff scores that don't account for profile variability</li>
+<li>Create a "wait-to-fail" paradigm preventing early intervention</li>
+<li>Focus on "test and place" rather than intervention</li>
+</ul>
+</div>
+<div class="theory-section">
+<h4>Why C-DM Over RTI Alone?</h4>
+<p style="margin-bottom: 10px;">While RTI is valuable for prevention and service delivery, it cannot be used alone for SLD identification because:</p>
+<ul>
+<li>There is no agreed-upon method, curriculum, or measurement tools</li>
+<li>Different RTI methods identify different children as nonresponders</li>
+<li>RTI shows only that a child didn't respond - not <em>why</em> they didn't respond</li>
+<li>There is no "true positive" in an RTI model for disability determination</li>
+<li>Nonresponse can occur for many reasons (only one of which is SLD)</li>
+<li>RTI does not address IDEA statutory requirements for processing deficits</li>
+</ul>
+</div>
+<div class="caution-box">
+<h4>⚠️ CRITICAL DISTINCTION</h4>
+<p><strong>RTI is excellent for serving children's needs, but scientifically flawed for disability determination.</strong> The final IDEA regulations (2006) state: "RTI is only one component of the process to identify children in need of special education... Determining why a child has not responded to research-based interventions requires a comprehensive evaluation... An RTI process does not replace the need for a comprehensive evaluation."</p>
+</div>
+<div class="theory-section">
+<h4>The "Third Method" Approach</h4>
+<p style="margin-bottom: 10px;">IDEA 2004 allows three methods for SLD identification:</p>
+<ul>
+<li><strong>Method 1:</strong> Ability-Achievement Discrepancy (no longer required, widely criticized)</li>
+<li><strong>Method 2:</strong> RTI/Failure to Respond (cannot determine SLD alone)</li>
+<li><strong>Method 3:</strong> Pattern of Strengths and Weaknesses (PSW) - "May permit the use of other alternative research-based procedures" (§300.8(c)(10))</li>
+</ul>
+<p style="margin-top: 15px;"><strong>C-DM is a PSW approach</strong> that addresses both IDEA statutory (processing deficit) and regulatory (comprehensive evaluation) requirements.</p>
+</div>
+</div>
+<!-- Clinical Guidance Tab -->
+<div id="guidance" class="tab-content">
+<div class="section">
+<h2>📖 Clinical Guidance for C-DM Use</h2>
+<div class="caution-box">
+<h4>⚠️ ESSENTIAL: Cognitive Hypothesis Testing (CHT)</h4>
+<p>The C-DM should not be used in isolation. It is part of the <strong>Cognitive Hypothesis Testing (CHT)</strong> framework that requires:</p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Using intelligence/cognitive tests as <em>screening tools</em>, not endpoints</li>
+<li>Generating hypotheses from initial cognitive profiles</li>
+<li>Testing hypotheses with additional measures of greater specificity</li>
+<li>Confirming findings through multiple data sources (RTI, observations, work samples)</li>
+<li>Establishing concurrent, ecological, and treatment validity</li>
+<li>Linking assessment findings to targeted interventions</li>
+</ul>
+</div>
+<div class="theory-section">
+<h4>Step 3 Requirement: Empirical Literature Review</h4>
+<p style="margin-bottom: 10px;"><strong>Before calculating C-DM:</strong> You must verify that the cognitive deficit is empirically associated with the achievement deficit. Examples:</p>
+<ul>
+<li><strong>Valid:</strong> Working memory (Gsm) deficit → Reading comprehension deficit (well-documented relationship)</li>
+<li><strong>Valid:</strong> Phonological processing deficit → Basic reading skills deficit (strong research support)</li>
+<li><strong>Valid:</strong> Visual-spatial processing deficit → Math calculation deficit (established link)</li>
+<li><strong>Invalid:</strong> Fluid reasoning (Gf) deficit → Basic word reading deficit (typically not related)</li>
+</ul>
+<p style="margin-top: 15px;"><em>Resources:</em> See McGrew & Wendling (2010) for comprehensive CHC-achievement relationships; Hale & Fiorello (2004) for neuropsychological-achievement relationships.</p>
+</div>
+<div class="theory-section">
+<h4>Dealing with Profile Variability</h4>
+<p style="margin-bottom: 10px;"><strong>Important:</strong> If standard factor scores don't reflect the child's true cognitive profile, you must create new factor scores:</p>
+<ul>
+<li><strong>Example 1:</strong> ACID profile (Arithmetic, Coding, Information, Digit Span) - common in reading disabilities</li>
+<li><strong>Example 2:</strong> Custom Gf composite using Matrix Reasoning + Picture Concepts for math word problem deficits</li>
+<li><strong>Example 3:</strong> Right hemisphere profile (low Comprehension depresses VCI; high Picture Concepts inflates PRI) - creates false average scores masking nonverbal LD</li>
+</ul>
+<p style="margin-top: 15px;"><strong>When creating new factor scores:</strong> Use at least 2 subtests measuring the same construct, calculate new reliability coefficients using Fisher's z-transformation (see Hale, Fiorello et al., 2008).</p>
+</div>
+<div class="dont-forget-box">
+<h4>💡 Profile Variability and IQ Interpretation</h4>
+<p>Profile variability precludes global IQ interpretation in children with SLD and limits the predictive validity of cognitive tests. <strong>Best practices require careful examination of "psychological processes" based on empirical profile analysis</strong> to determine SLD and how the processes interfere with academic achievement, for both identification and intervention purposes.</p>
+</div>
+<div class="theory-section">
+<h4>Step 8: Ecological Validity & Team Consensus</h4>
+<p style="margin-bottom: 10px;">After obtaining C-DM results, you must integrate with ALL evaluation data:</p>
+<ul>
+<li><strong>RTI Data:</strong> Progress monitoring graphs, intervention attempts, fidelity data</li>
+<li><strong>Classroom Evidence:</strong> Permanent products (work samples), teacher reports, grades</li>
+<li><strong>Observations:</strong> Structured classroom observations showing processing deficit impact</li>
+<li><strong>Developmental History:</strong> Early signs, family history, medical factors</li>
+<li><strong>Additional Testing:</strong> Neuropsychological measures confirming/refuting hypotheses</li>
+<li><strong>Exclusionary Factors:</strong> Rule out sensory, intellectual, emotional, cultural, environmental causes</li>
+</ul>
+<p style="margin-top: 15px;"><strong>Team Decision:</strong> Does all evidence converge to support SLD classification under IDEA statutory and regulatory requirements?</p>
+</div>
+<div class="theory-section">
+<h4>Common C-DM Pitfalls to Avoid</h4>
+<ul>
+<li>❌ Using highest score, lowest score, lowest achievement without theoretical justification</li>
+<li>❌ Ignoring literature on cognitive-achievement relationships</li>
+<li>❌ Using published factor scores when significant within-factor variability exists</li>
+<li>❌ Stopping at statistical significance without ecological validation</li>
+<li>❌ Making eligibility decision based solely on C-DM without considering all data</li>
+<li>❌ Failing to link identified processing deficits to intervention planning</li>
+<li>✅ <strong>DO:</strong> Use C-DM as part of comprehensive CHT approach with multiple data sources</li>
+</ul>
+</div>
+<div class="caution-box">
+<h4>⚠️ Linking Assessment to Intervention</h4>
+<p><strong>The CHT model is designed to link assessment to intervention.</strong> Once SLD is identified through C-DM:</p>
+<ul style="margin-left: 20px; margin-top: 10px;">
+<li>Develop targeted interventions addressing the specific processing deficit</li>
+<li>Monitor intervention effectiveness using single-subject design</li>
+<li>Modify interventions based on ongoing data collection</li>
+<li>Continue until treatment efficacy is achieved</li>
+</ul>
+<p style="margin-top: 10px;"><em>Recent neuroimaging research shows that when effective interventions target specific processing deficits, children's brain functioning normalizes (Simos et al., 2005; Shaywitz et al., 2003).</em></p>
+</div>
+<div class="dont-forget-box">
+<h4>💡 Remember</h4>
+<p><strong>Children with SLD have learning DEFICITS, not learning DELAYS.</strong> Neuropsychological research clearly shows they process information differently and require individualized instruction, not just more intensive instruction. The brain areas typical children use to solve tasks are different for those with SLD, and effective interventions lead to normalization of brain function.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+function switchTab(tabName) {
+// Hide all tab contents
+document.querySelectorAll('.tab-content').forEach(content => {
+content.classList.remove('active');
+});
+// Remove active class from all tabs
+document.querySelectorAll('.tab').forEach(tab => {
+tab.classList.remove('active');
+});
+// Show selected tab content
+document.getElementById(tabName).classList.add('active');
+// Add active class to clicked tab
+event.target.classList.add('active');
+// Scroll to top
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function calculateSED(r1, r2, sd) {
+return sd * Math.sqrt(2 - (r1 + r2));
+}
+function calculateCDM() {
+// Get input values
+const cogStrength = parseFloat(document.getElementById('cogStrength').value);
+const cogWeakness = parseFloat(document.getElementById('cogWeakness').value);
+const achDeficit = parseFloat(document.getElementById('achDeficit').value);
+const relCogStrength = parseFloat(document.getElementById('relCogStrength').value);
+const relCogWeakness = parseFloat(document.getElementById('relCogWeakness').value);
+const relAchDeficit = parseFloat(document.getElementById('relAchDeficit').value);
+const sd = parseFloat(document.getElementById('sd').value);
+const zScore = parseFloat(document.getElementById('significance').value);
+const achArea = document.getElementById('achArea').value || "Achievement Area";
+// Validate inputs
+if (isNaN(cogStrength) || isNaN(cogWeakness) || isNaN(achDeficit) || isNaN(relCogStrength) || isNaN(relCogWeakness) || isNaN(relAchDeficit)) {
+alert('Please fill in all required fields with valid numbers.');
+return;
+}
+// Validate reliability coefficients
+if (relCogStrength < 0.5 || relCogStrength > 0.99 || relCogWeakness < 0.5 || relCogWeakness > 0.99 || relAchDeficit < 0.5 || relAchDeficit > 0.99) {
+alert('Reliability coefficients should be between 0.50 and 0.99');
+return;
+}
+// Calculate Step 5
+const sed1 = calculateSED(relCogStrength, relCogWeakness, sd);
+const critical1 = sed1 * zScore;
+const diff1 = Math.abs(cogStrength - cogWeakness);
+const sig1 = diff1 >= critical1;
+// Calculate Step 6
+const sed2 = calculateSED(relCogStrength, relAchDeficit, sd);
+const critical2 = sed2 * zScore;
+const diff2 = Math.abs(cogStrength - achDeficit);
+const sig2 = diff2 >= critical2;
+// Calculate Step 7
+const sed3 = calculateSED(relCogWeakness, relAchDeficit, sd);
+const critical3 = sed3 * zScore;
+const diff3 = Math.abs(cogWeakness - achDeficit);
+const sig3 = diff3 < critical3;
+// Display results - Step 5
+document.getElementById('result-cogStrength').textContent = cogStrength;
+document.getElementById('result-cogWeakness').textContent = cogWeakness;
+document.getElementById('result-diff1').textContent = diff1.toFixed(2);
+document.getElementById('result-sed1').textContent = sed1.toFixed(2);
+document.getElementById('result-critical1').textContent = critical1.toFixed(2);
+document.getElementById('result-sig1').textContent = sig1 ? '✓ Significant Discordance' : '✗ Not Significant';
+document.getElementById('result-sig1').className = sig1 ? 'result-value significant' : 'result-value not-significant';
+document.getElementById('interp1').textContent = sig1 ? 'Significant intra-cognitive variability exists. There IS a processing deficit (cognitive strength significantly exceeds cognitive weakness), suggesting the child has a deficit in basic psychological processes.' : 'No significant intra-cognitive variability. The cognitive profile does not show sufficient discordance for C-DM criteria. Consider whether global low ability or other factors explain performance.';
+// Display results - Step 6
+document.getElementById('result-cogStrength2').textContent = cogStrength;
+document.getElementById('result-achDeficit2').textContent = achDeficit;
+document.getElementById('result-diff2').textContent = diff2.toFixed(2);
+document.getElementById('result-sed2').textContent = sed2.toFixed(2);
+document.getElementById('result-critical2').textContent = critical2.toFixed(2);
+document.getElementById('result-sig2').textContent = sig2 ? '✓ Significant Discordance' : '✗ Not Significant';
+document.getElementById('result-sig2').className = sig2 ? 'result-value significant' : 'result-value not-significant';
+document.getElementById('interp2').textContent = sig2 ? 'Unexpected underachievement is present. Achievement is significantly below cognitive strengths, indicating the child is not performing at their potential level (consistent with SLD statutory definition).' : 'No unexpected underachievement. Achievement is relatively consistent with cognitive strengths, not indicating sufficient ability-achievement discordance for SLD.';
+// Display results - Step 7
+document.getElementById('result-cogWeakness3').textContent = cogWeakness;
+document.getElementById('result-achDeficit3').textContent = achDeficit;
+document.getElementById('result-diff3').textContent = diff3.toFixed(2);
+document.getElementById('result-sed3').textContent = sed3.toFixed(2);
+document.getElementById('result-critical3').textContent = critical3.toFixed(2);
+document.getElementById('result-sig3').textContent = sig3 ? '✓ Concordance Exists' : '✗ Discordance Exists';
+document.getElementById('result-sig3').className = sig3 ? 'result-value significant' : 'result-value not-significant';
+let interp3Text = '';
+if (sig3) {
+interp3Text = 'Concordance confirmed. No significant difference exists between cognitive weakness and achievement deficit. The processing deficit plausibly explains the achievement problem (cognitive deficit → academic deficit relationship established).';
+} else if (achDeficit < cogWeakness) {
+interp3Text = 'Achievement is significantly BELOW cognitive weakness. This suggests additional factors (beyond the cognitive deficit) may be impacting achievement. Consider comorbid conditions, emotional factors, or inadequate instruction. May still warrant SLD classification with additional evaluation.';
+} else {
+interp3Text = 'Achievement is significantly ABOVE cognitive weakness. This may indicate the child is using compensatory strategies to mask the deficit, or the achievement test is not sensitive to the processing weakness. Carefully evaluate ecological validity before making eligibility decision.';
+}
+document.getElementById('interp3').textContent = interp3Text;
+// Final Conclusion
+const allCriteriaMet = sig1 && sig2 && sig3;
+const conclusion = document.getElementById('conclusion');
+const sigLevel = zScore === 1.96 ? 'p < .05' : 'p < .01';
+if (allCriteriaMet) {
+conclusion.className = 'conclusion';
+document.getElementById('finalConclusion').innerHTML = `
+<strong>✓ ALL THREE C-DM CRITERIA MET (at ${sigLevel} level)</strong><br><br>
+The statistical pattern of scores is <strong>consistent with</strong> Specific Learning Disability in ${achArea}. The child demonstrates:<br>
+<ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+<li>✓ <strong>Discordance:</strong> Significant intra-cognitive variability (processing deficit exists)</li>
+<li>✓ <strong>Discordance:</strong> Unexpected underachievement relative to cognitive strengths</li>
+<li>✓ <strong>Concordance:</strong> Achievement consistent with cognitive weakness (deficit explains underachievement)</li>
+</ul>
+<br>
+<strong style="color: #d32f2f;">⚠️ CRITICAL REMINDER:</strong> These statistical findings support but DO NOT CONFIRM SLD alone. You must proceed to Step 8.
+`;
+document.getElementById('nextSteps').innerHTML = `<strong>Step 8 (REQUIRED):</strong> Review ALL evaluation data with the multidisciplinary team: (1) RTI progress monitoring showing chronic nonresponse to increasingly intensive interventions, (2) Classroom observations documenting processing deficit impact, (3) Permanent products showing achievement deficit, (4) Teacher/parent reports, (5) Additional neuropsychological measures confirming hypotheses, (6) Exclusionary factors ruled out. <strong>Ecological validity must be established</strong> before SLD determination. Then develop individualized interventions targeting the identified processing weakness (see CHT framework for intervention planning).`;
+} else {
+conclusion.className = 'conclusion negative';
+let failedSteps = [];
+if (!sig1) failedSteps.push('Step 5 (Intra-cognitive discordance not found - no processing deficit evident)');
+if (!sig2) failedSteps.push('Step 6 (No unexpected underachievement - achievement consistent with strengths)');
+if (!sig3) failedSteps.push('Step 7 (No concordance - cognitive weakness does not explain achievement deficit)');
+document.getElementById('finalConclusion').innerHTML = `
+<strong>✗ C-DM CRITERIA NOT FULLY MET</strong><br><br>
+The following statistical criteria were NOT met:<br>
+<ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+${failedSteps.map(step => `<li>✗ ${step}</li>`).join('')}
+</ul>
+<br>
+Based on the C-DM statistical pattern alone, this profile does <strong>not</strong> provide sufficient evidence for SLD identification. The achievement difficulties may be due to other factors (e.g., learning delay vs. learning deficit, low global ability, inadequate instruction, other disorder, environmental factors).
+`;
+document.getElementById('nextSteps').innerHTML = `<strong>Consider alternative explanations:</strong> (1) Low achievement without processing deficit may indicate need for more intensive instruction (learning delay), not SLD, (2) Other disabilities (ADHD, anxiety, depression, language disorder) may better explain difficulties, (3) Instructional factors, attendance, language barriers, or environmental issues may be primary cause, (4) May need additional cognitive/neuropsychological testing to identify different processing deficits, (5) Return to Steps 1-3 to reconsider cognitive profile or cognitive-achievement relationship. Continue intensive RTI interventions while gathering additional data.`;
+}
+// Show results
+document.getElementById('results').classList.add('show');
+// Scroll to results
+document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function resetForm() {
+document.getElementById('cogStrength').value = '';
+document.getElementById('cogWeakness').value = '';
+document.getElementById('achDeficit').value = '';
+document.getElementById('relCogStrength').value = '';
+document.getElementById('relCogWeakness').value = '';
+document.getElementById('relAchDeficit').value = '';
+document.getElementById('sd').value = '15';
+document.getElementById('significance').value = '1.96';
+document.getElementById('achArea').value = '';
+document.getElementById('results').classList.remove('show');
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function loadExample() {
+document.getElementById('cogStrength').value = '110';
+document.getElementById('cogWeakness').value = '85';
+document.getElementById('achDeficit').value = '82';
+document.getElementById('relCogStrength').value = '0.92';
+document.getElementById('relCogWeakness').value = '0.88';
+document.getElementById('relAchDeficit').value = '0.90';
+document.getElementById('achArea').value = 'Reading - Basic Reading Skills';
+alert('Example data loaded! This represents a child with:\n\n• High Verbal Comprehension (VCI = 110)\n• Low Working Memory (WMI = 85)\n• Low Reading Achievement (82)\n\nClick "Calculate C-DM Analysis" to see results.');
+}
+// Keyboard support
+document.addEventListener('DOMContentLoaded', function() {
+const inputs = document.querySelectorAll('input');
+inputs.forEach(input => {
+input.addEventListener('keypress', function(e) {
+if (e.key === 'Enter') {
+calculateCDM();
+}
+});
+});
+});
+</script>
 </body>
 </html>
