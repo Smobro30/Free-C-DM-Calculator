@@ -1,676 +1,1098 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C-DM Calculator - Concordance-Discordance Model for SLD Identification</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-.container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-.header h1 { font-size: 2em; margin-bottom: 10px; }
-.header p { font-size: 0.95em; opacity: 0.95; }
-.content { padding: 30px; }
-.dont-forget-box { background: #e3f2fd; border-left: 4px solid #2196f3; padding: 20px; margin: 20px 0; border-radius: 5px; }
-.dont-forget-box h4 { color: #1976d2; margin-bottom: 10px; font-size: 1.1em; }
-.dont-forget-box p { color: #333; line-height: 1.6; font-size: 0.95em; }
-.caution-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
-.caution-box h4 { color: #e65100; margin-bottom: 10px; font-size: 1.1em; }
-.caution-box p { color: #333; line-height: 1.6; font-size: 0.95em; }
-.info-box { background: #f8f9fa; border-left: 4px solid #667eea; padding: 15px; margin-bottom: 30px; border-radius: 5px; }
-.info-box h3 { color: #667eea; margin-bottom: 10px; font-size: 1.1em; }
-.info-box p { color: #555; line-height: 1.6; font-size: 0.95em; }
-.formula-box { background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
-.formula-box code { font-size: 1.2em; font-weight: bold; color: #856404; }
-.section { background: #f8f9fa; padding: 25px; margin-bottom: 25px; border-radius: 10px; border: 2px solid #e9ecef; }
-.section h2 { color: #667eea; margin-bottom: 20px; font-size: 1.4em; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
-.input-group { margin-bottom: 20px; }
-.input-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em; }
-.input-group input, .input-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
-.input-group input:focus, .input-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
-.input-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-.help-text { font-size: 0.85em; color: #666; margin-top: 5px; font-style: italic; }
-.button-group { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
-.btn { padding: 15px 30px; font-size: 1em; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; font-weight: 600; flex: 1; min-width: 150px; }
-.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
-.btn-secondary { background: #6c757d; color: white; }
-.btn-secondary:hover { background: #5a6268; }
-.btn-info { background: #17a2b8; color: white; }
-.btn-info:hover { background: #138496; }
-.results { margin-top: 30px; display: none; }
-.results.show { display: block; animation: slideIn 0.5s ease-out; }
-@keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.result-card { background: white; padding: 25px; margin-bottom: 20px; border-radius: 10px; border-left: 5px solid #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-.result-card h3 { color: #667eea; margin-bottom: 15px; font-size: 1.2em; }
-.result-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
-.result-item:last-child { border-bottom: none; }
-.result-label { font-weight: 600; color: #555; }
-.result-value { color: #333; font-weight: bold; }
-.significant { color: #28a745; font-weight: bold; }
-.not-significant { color: #dc3545; font-weight: bold; }
-.conclusion { background: #d4edda; border: 2px solid #28a745; padding: 20px; border-radius: 10px; margin-top: 20px; }
-.conclusion.negative { background: #f8d7da; border-color: #dc3545; }
-.conclusion h3 { color: #155724; margin-bottom: 10px; }
-.conclusion.negative h3 { color: #721c24; }
-.conclusion p { line-height: 1.6; color: #155724; }
-.conclusion.negative p { color: #721c24; }
-.steps-guide { background: #e7f3ff; border: 2px solid #2196f3; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
-.steps-guide h3 { color: #1976d2; margin-bottom: 15px; }
-.steps-guide ol { margin-left: 20px; color: #555; }
-.steps-guide li { margin-bottom: 10px; line-height: 1.6; }
-.interpretation { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin-top: 15px; border-radius: 5px; }
-.interpretation strong { color: #e65100; }
-.step-indicator { display: inline-block; background: #667eea; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; margin-right: 10px; }
-.tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e9ecef; }
-.tab { padding: 12px 24px; background: transparent; border: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.3s; }
-.tab.active { color: #667eea; border-bottom-color: #667eea; }
-.tab:hover { color: #667eea; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.theory-section { background: #f1f8e9; padding: 20px; border-radius: 10px; margin: 20px 0; }
-.theory-section h4 { color: #33691e; margin-bottom: 15px; }
-.theory-section ul { margin-left: 20px; line-height: 1.8; }
-@media (max-width: 768px) {
-.header h1 { font-size: 1.5em; }
-.content { padding: 15px; }
-.section { padding: 15px; }
-.input-row { grid-template-columns: 1fr; }
-.button-group { flex-direction: column; }
-.btn { width: 100%; }
-.tabs { flex-direction: column; }
-.tab { text-align: left; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C-DM Calculator - Concordance-Discordance Model for SLD Identification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .dont-forget-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .dont-forget-box h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .dont-forget-box p {
+            color: #333;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .caution-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .caution-box h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .caution-box p {
+            color: #333;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .formula-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .formula-box code {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #856404;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .result-value {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .significant {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .not-significant {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .conclusion {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .conclusion.negative {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .conclusion h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .conclusion.negative h3 {
+            color: #721c24;
+        }
+
+        .conclusion p {
+            line-height: 1.6;
+            color: #155724;
+        }
+
+        .conclusion.negative p {
+            color: #721c24;
+        }
+
+        .steps-guide {
+            background: #e7f3ff;
+            border: 2px solid #2196f3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .steps-guide h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .steps-guide ol {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .steps-guide li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .interpretation {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+
+        .interpretation strong {
+            color: #e65100;
+        }
+
+        .step-indicator {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .theory-section {
+            background: #f1f8e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .theory-section h4 {
+            color: #33691e;
+            margin-bottom: 15px;
+        }
+
+        .theory-section ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                text-align: left;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<div class="header">
-<h1>🧠 Concordance-Discordance Model (C-DM) Calculator</h1>
-<p>Statistical Analysis for Specific Learning Disability (SLD) Identification</p>
-<p style="font-size: 0.85em; margin-top: 10px;">Based on Hale, Wycoff, & Fiorello (2010) - Part of the Cognitive Hypothesis Testing (CHT) Framework</p>
-</div>
-<div class="content">
-<!-- Tab Navigation -->
-<div class="tabs">
-<button class="tab active" onclick="switchTab('calculator')">📊 Calculator</button>
-<button class="tab" onclick="switchTab('background')">📚 Background & Theory</button>
-<button class="tab" onclick="switchTab('guidance')">📖 Clinical Guidance</button>
-</div>
-<!-- Calculator Tab -->
-<div id="calculator" class="tab-content active">
-<div class="dont-forget-box">
-<h4>💡 DON'T FORGET</h4>
-<p><strong>Learning Delay vs. Learning Deficit:</strong> The difference between a child with low achievement (learning delay) and a child with specific learning disability (learning deficit) is particularly relevant for SLD classification and service delivery. If a child has a learning <strong>delay</strong>, then a more intensive instructional approach can be used, because they learn similarly to others but need more instruction. If a child has a learning <strong>deficit</strong>, then a more individualized instructional approach is needed, because they learn differently than others and need instruction designed to meet their unique needs.</p>
-</div>
-<div class="info-box">
-<h3>📖 About the C-DM Method</h3>
-<p>The Concordance-Discordance Model uses statistical analysis to identify Specific Learning Disabilities by comparing cognitive strengths, cognitive weaknesses, and achievement deficits. This is part of the Cognitive Hypothesis Testing (CHT) approach that emphasizes comprehensive evaluation for children who do not respond to RTI (Response to Intervention). The C-DM addresses IDEA statutory and regulatory requirements by examining patterns of processing strengths and weaknesses.</p>
-</div>
-<div class="caution-box">
-<h4>⚠️ CAUTION</h4>
-<p>The C-DM approach for SLD identification requires careful evaluation of cognitive strengths, deficits, and associated achievement deficits to ensure <strong>ecological validity</strong> of findings. It is inappropriate to just choose the highest cognitive score, the lowest cognitive score, and the lowest achievement score, and then see if they are significantly different. This strictly numerical approach will lead to poor diagnostic and intervention decisions. <strong>Clinical significance and ecological validity must accompany statistical significance.</strong></p>
-</div>
-<div class="formula-box">
-    <p style="margin-bottom: 10px; color: #856404;"><strong>Formula for Standard Error of Difference (SED):</strong></p>
-    <code>SED = SD × √[2 - (r₁ + r₂)]</code>
-    <p style="margin-top: 10px; font-size: 0.9em; color: #856404;">
-        Critical Value = SED × Z-score<br>
-        (Z-score: 1.96 for p < .05; 2.58 for p < .01)
-    </p>
-</div>
-<div class="steps-guide">
-<h3>📋 C-DM as Part of Comprehensive Evaluation (Steps 5-7 of 8)</h3>
-<p style="margin-bottom: 15px;"><strong>Prerequisites (Steps 1-4):</strong> Before using this calculator, ensure you have:</p>
-<ol>
-<li><strong>Step 1:</strong> Determined cognitive profile shows sufficient variability (not consistent across all subtests)</li>
-<li><strong>Step 2:</strong> Confirmed achievement deficit through standardized testing, RTI data, classroom work, and teacher reports</li>
-<li><strong>Step 3:</strong> Reviewed literature to ensure cognitive deficit is empirically associated with achievement deficit</li>
-<li><strong>Step 4:</strong> Obtained reliability coefficients from test manuals</li>
-</ol>
-<p style="margin-top: 15px; margin-bottom: 15px;"><strong>This Calculator Performs Steps 5-7:</strong></p>
-<ol start="5">
-<li><strong>Step 5:</strong> Calculate discordance between cognitive strength and weakness</li>
-<li><strong>Step 6:</strong> Calculate discordance between cognitive strength and achievement deficit</li>
-<li><strong>Step 7:</strong> Calculate concordance between cognitive weakness and achievement deficit</li>
-</ol>
-<p style="margin-top: 15px;"><strong>After calculation, proceed to Step 8:</strong> Determine ecological validity with team consensus using all evaluation data (RTI, observations, work samples, etc.)</p>
-</div>
-<!-- Input Section -->
-<div class="section">
-<h2><span class="step-indicator">5</span>Enter Test Scores (Standard Scores)</h2>
-<div class="input-row">
-<div class="input-group">
-<label for="cogStrength">Cognitive Strength Score:</label>
-<input type="number" id="cogStrength" placeholder="e.g., 110" min="40" max="160" step="1">
-<p class="help-text">Highest cognitive ability (e.g., VCI, PRI, Gf, Gc)</p>
-</div>
-<div class="input-group">
-<label for="cogWeakness">Cognitive Weakness Score:</label>
-<input type="number" id="cogWeakness" placeholder="e.g., 85" min="40" max="160" step="1">
-<p class="help-text">Lowest cognitive ability (e.g., WMI, PSI, Gsm, Gs)</p>
-</div>
-<div class="input-group">
-<label for="achDeficit">Achievement Deficit Score:</label>
-<input type="number" id="achDeficit" placeholder="e.g., 82" min="40" max="160" step="1">
-<p class="help-text">Low achievement area (must be empirically linked to cognitive deficit)</p>
-</div>
-</div>
-</div>
-<!-- Reliability Section -->
-<div class="section">
-<h2><span class="step-indicator">6</span>Enter Reliability Coefficients</h2>
-<div class="caution-box">
-<h4>📘 Finding Reliability Coefficients</h4>
-<p>These values come from test technical manuals (look for "coefficient alpha" or "internal consistency"). Typical values: 0.80-0.98. <strong>Note:</strong> If using subtest combinations to create new factor scores (e.g., ACID profile, custom Gf composite), you must calculate new reliability coefficients using Fisher's z-transformation (see Hale, Fiorello et al., 2008).</p>
-</div>
-<div class="input-row">
-<div class="input-group">
-<label for="relCogStrength">Reliability - Cognitive Strength (r₁):</label>
-<input type="number" id="relCogStrength" placeholder="e.g., 0.92" min="0.50" max="0.99" step="0.01">
-<p class="help-text">From test manual (coefficient alpha)</p>
-</div>
-<div class="input-group">
-<label for="relCogWeakness">Reliability - Cognitive Weakness (r₂):</label>
-<input type="number" id="relCogWeakness" placeholder="e.g., 0.88" min="0.50" max="0.99" step="0.01">
-<p class="help-text">From test manual (coefficient alpha)</p>
-</div>
-<div class="input-group">
-<label for="relAchDeficit">Reliability - Achievement Deficit (r₃):</label>
-<input type="number" id="relAchDeficit" placeholder="e.g., 0.90" min="0.50" max="0.99" step="0.01">
-<p class="help-text">From test manual (coefficient alpha)</p>
-</div>
-</div>
-</div>
-<!-- Settings Section -->
-<div class="section">
-<h2><span class="step-indicator">7</span>Analysis Settings</h2>
-<div class="input-row">
-<div class="input-group">
-<label for="sd">Standard Deviation (SD):</label>
-<input type="number" id="sd" value="15" min="1" max="30" step="0.1">
-<p class="help-text">Typically 15 for most tests (WISC, WIAT, WJ)</p>
-</div>
-<div class="input-group">
-<label for="significance">Significance Level:</label>
-<select id="significance">
-<option value="1.96">p < .05 (1.96) - Standard</option>
-<option value="2.58">p < .01 (2.58) - Stringent</option>
-</select>
-<p class="help-text">Most practitioners use p < .05</p>
-</div>
-<div class="input-group">
-<label for="achArea">Achievement Area (Optional):</label>
-<select id="achArea">
-<option value="">Select area...</option>
-<option value="Reading - Basic Reading Skills">Reading - Basic Reading Skills</option>
-<option value="Reading - Reading Fluency">Reading - Reading Fluency</option>
-<option value="Reading - Reading Comprehension">Reading - Reading Comprehension</option>
-<option value="Mathematics - Math Calculation">Mathematics - Math Calculation</option>
-<option value="Mathematics - Math Problem Solving">Mathematics - Math Problem Solving</option>
-<option value="Written Expression - Spelling">Written Expression - Spelling</option>
-<option value="Written Expression - Writing Fluency">Written Expression - Writing Fluency</option>
-<option value="Written Expression - Written Expression">Written Expression - Written Expression</option>
-<option value="Oral Language - Listening Comprehension">Oral Language - Listening Comprehension</option>
-<option value="Oral Language - Oral Expression">Oral Language - Oral Expression</option>
-</select>
-<p class="help-text">For report purposes</p>
-</div>
-</div>
-</div>
-<!-- Buttons -->
-<div class="button-group">
-<button class="btn btn-primary" onclick="calculateCDM()">🔢 Calculate C-DM Analysis</button>
-<button class="btn btn-info" onclick="loadExample()">📝 Load Example Data</button>
-<button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
-</div>
-<!-- Results Section -->
-<div class="results" id="results">
-<div class="section">
-<h2>📊 C-DM Analysis Results</h2>
-<!-- Step 5 -->
-<div class="result-card">
-<h3><span class="step-indicator">5</span>Step 5: Discordance - Cognitive Strength vs. Cognitive Weakness</h3>
-<div class="result-item">
-<span class="result-label">Cognitive Strength Score:</span>
-<span class="result-value" id="result-cogStrength"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Cognitive Weakness Score:</span>
-<span class="result-value" id="result-cogWeakness"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Difference:</span>
-<span class="result-value" id="result-diff1"></span>
-</div>
-<div class="result-item">
-<span class="result-label">SED:</span>
-<span class="result-value" id="result-sed1"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Critical Value:</span>
-<span class="result-value" id="result-critical1"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Result:</span>
-<span class="result-value" id="result-sig1"></span>
-</div>
-<div class="interpretation">
-<strong>Interpretation:</strong>
-<span id="interp1"></span>
-</div>
-</div>
-<!-- Step 6 -->
-<div class="result-card">
-<h3><span class="step-indicator">6</span>Step 6: Discordance - Cognitive Strength vs. Achievement Deficit</h3>
-<div class="result-item">
-<span class="result-label">Cognitive Strength Score:</span>
-<span class="result-value" id="result-cogStrength2"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Achievement Deficit Score:</span>
-<span class="result-value" id="result-achDeficit2"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Difference:</span>
-<span class="result-value" id="result-diff2"></span>
-</div>
-<div class="result-item">
-<span class="result-label">SED:</span>
-<span class="result-value" id="result-sed2"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Critical Value:</span>
-<span class="result-value" id="result-critical2"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Result:</span>
-<span class="result-value" id="result-sig2"></span>
-</div>
-<div class="interpretation">
-<strong>Interpretation:</strong>
-<span id="interp2"></span>
-</div>
-</div>
-<!-- Step 7 -->
-<div class="result-card">
-<h3><span class="step-indicator">7</span>Step 7: Concordance - Cognitive Weakness vs. Achievement Deficit</h3>
-<div class="result-item">
-<span class="result-label">Cognitive Weakness Score:</span>
-<span class="result-value" id="result-cogWeakness3"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Achievement Deficit Score:</span>
-<span class="result-value" id="result-achDeficit3"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Difference:</span>
-<span class="result-value" id="result-diff3"></span>
-</div>
-<div class="result-item">
-<span class="result-label">SED:</span>
-<span class="result-value" id="result-sed3"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Critical Value:</span>
-<span class="result-value" id="result-critical3"></span>
-</div>
-<div class="result-item">
-<span class="result-label">Result:</span>
-<span class="result-value" id="result-sig3"></span>
-</div>
-<div class="interpretation">
-<strong>Interpretation:</strong>
-<span id="interp3"></span>
-</div>
-</div>
-<!-- Final Conclusion -->
-<div class="conclusion" id="conclusion">
-<h3>🎯 C-DM Statistical Pattern Results</h3>
-<p id="finalConclusion"></p>
-<div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(0,0,0,0.1);">
-<p style="font-size: 0.9em;"><strong>Step 8 - Next Steps:</strong> <span id="nextSteps"></span></p>
-</div>
-</div>
-</div>
-</div>
-<!-- Background & Theory Tab -->
-<div id="background" class="tab-content">
-<div class="section">
-<h2>📚 Theoretical Background</h2>
-<div class="theory-section">
-<h4>The Balanced Practice Model (Hale, 2006)</h4>
-<p style="margin-bottom: 15px;">The C-DM is part of a comprehensive three-tier model:</p>
-<ul>
-<li><strong>Tier 1:</strong> Standard Protocol RTI (~85% of children) - Universal screening and evidence-based instruction</li>
-<li><strong>Tier 2:</strong> Problem-Solving RTI (~10% of children) - Individualized interventions for nonresponders</li>
-<li><strong>Tier 3:</strong> Comprehensive Evaluation + Specialized Services (~5% of children) - For chronic nonresponders, includes C-DM analysis to determine SLD vs. other disorders</li>
-</ul>
-</div>
-<div class="dont-forget-box">
-<h4>💡 The Learning Disabilities Roundtable (2002, 2004)</h4>
-<p>"The identification of a core cognitive deficit, or a disorder in one or more of the basic psychological processes, predictive of an imperfect ability to learn, is a marker for an SLD" and "also acknowledges intra-individual differences as a fundamental concept of SLD."</p>
-</div>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Concordance-Discordance Model (C-DM) Calculator</h1>
+            <p>Statistical Analysis for Specific Learning Disability (SLD) Identification</p>
+            <p style="font-size: 0.85em; margin-top: 10px;">Based on Hale, Wycoff, & Fiorello (2010) - Part of the Cognitive Hypothesis Testing (CHT) Framework</p>
+        </div>
 
-<!-- NEW STATISTICAL FORMULA DETAIL SECTION -->
-<div class="theory-section">
-    <h4>Statistical Foundations: SED and Critical Values</h4>
-    <p>The Concordance-Discordance Model (C-DM) relies on calculating the **Standard Error of Difference (SED)** to determine if the magnitude of the difference between two scores is statistically significant, meaning the difference is unlikely to be due to measurement error alone.</p>
-    
-    <p style="margin-top: 15px;"><strong>Standard Error of Difference (SED):</strong></p>
-    <p>The SED represents the standard deviation of the distribution of differences between two scores, accounting for both the overall test scale (SD) and the reliability of the measures ($r_1$ and $r_2$).</p>
-    <div style="text-align: center; margin: 10px 0;">
-        <code>SED = SD × √[2 - (r₁ + r₂)]</code>
-    </div>
-    <ul style="margin-left: 20px;">
-        <li><strong>SD:</strong> Standard Deviation of the measure (e.g., 15 for most standard score tests like WISC, WIAT).</li>
-        <li><strong>r₁:</strong> Reliability coefficient (e.g., coefficient alpha) of the first test score.</li>
-        <li><strong>r₂:</strong> Reliability coefficient (e.g., coefficient alpha) of the second test score.</li>
-    </ul>
-    
-    <p style="margin-top: 15px;"><strong>Critical Value (CV):</strong></p>
-    <p>The Critical Value is the minimum absolute difference required between two scores for that difference to be considered statistically significant at the selected probability level. It is calculated by multiplying the SED by the Z-score corresponding to the chosen level of significance.</p>
-    <div style="text-align: center; margin: 10px 0;">
-        <code>Critical Value = SED × Z-score</code>
-    </div>
-    <ul style="margin-left: 20px;">
-        <li><strong>Z-score (1.96):</strong> Corresponds to the 95% Confidence Interval (p &lt; .05).</li>
-        <li><strong>Z-score (2.58):</strong> Corresponds to the 99% Confidence Interval (p &lt; .01).</li>
-    </ul>
-    <p style="margin-top: 15px;">**Decision Rule:** The observed difference between two scores is deemed significant if $\lvert\text{Score A} - \text{Score B}\rvert \ge \text{Critical Value}$.</p>
-</div>
-<!-- END NEW STATISTICAL FORMULA DETAIL SECTION -->
+        <div class="content">
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('calculator')">📊 Calculator</button>
+                <button class="tab" onclick="switchTab('background')">📚 Background & Theory</button>
+                <button class="tab" onclick="switchTab('guidance')">📖 Clinical Guidance</button>
+            </div>
 
-<div class="theory-section">
-<h4>Why C-DM Over Ability-Achievement Discrepancy?</h4>
-<p style="margin-bottom: 10px;">Traditional discrepancy methods are problematic because they:</p>
-<ul>
-<li>Do not discriminate well between low achievers and children with SLD</li>
-<li>Are applied inconsistently across districts and states</li>
-<li>Lead to overidentification of minority students</li>
-<li>Use arbitrary cutoff scores that don't account for profile variability</li>
-<li>Create a "wait-to-fail" paradigm preventing early intervention</li>
-<li>Focus on "test and place" rather than intervention</li>
-</ul>
-</div>
-<div class="theory-section">
-<h4>Why C-DM Over RTI Alone?</h4>
-<p style="margin-bottom: 10px;">While RTI is valuable for prevention and service delivery, it cannot be used alone for SLD identification because:</p>
-<ul>
-<li>There is no agreed-upon method, curriculum, or measurement tools</li>
-<li>Different RTI methods identify different children as nonresponders</li>
-<li>RTI shows only that a child didn't respond - not <em>why</em> they didn't respond</li>
-<li>There is no "true positive" in an RTI model for disability determination</li>
-<li>Nonresponse can occur for many reasons (only one of which is SLD)</li>
-<li>RTI does not address IDEA statutory requirements for processing deficits</li>
-</ul>
-</div>
-<div class="caution-box">
-<h4>⚠️ CRITICAL DISTINCTION</h4>
-<p><strong>RTI is excellent for serving children's needs, but scientifically flawed for disability determination.</strong> The final IDEA regulations (2006) state: "RTI is only one component of the process to identify children in need of special education... Determining why a child has not responded to research-based interventions requires a comprehensive evaluation... An RTI process does not replace the need for a comprehensive evaluation."</p>
-</div>
-<div class="theory-section">
-<h4>The "Third Method" Approach</h4>
-<p style="margin-bottom: 10px;">IDEA 2004 allows three methods for SLD identification:</p>
-<ul>
-<li><strong>Method 1:</strong> Ability-Achievement Discrepancy (no longer required, widely criticized)</li>
-<li><strong>Method 2:</strong> RTI/Failure to Respond (cannot determine SLD alone)</li>
-<li><strong>Method 3:</strong> Pattern of Strengths and Weaknesses (PSW) - "May permit the use of other alternative research-based procedures" (§300.8(c)(10))</li>
-</ul>
-<p style="margin-top: 15px;"><strong>C-DM is a PSW approach</strong> that addresses both IDEA statutory (processing deficit) and regulatory (comprehensive evaluation) requirements.</p>
-</div>
-</div>
-<!-- Clinical Guidance Tab -->
-<div id="guidance" class="tab-content">
-<div class="section">
-<h2>📖 Clinical Guidance for C-DM Use</h2>
-<div class="caution-box">
-<h4>⚠️ ESSENTIAL: Cognitive Hypothesis Testing (CHT)</h4>
-<p>The C-DM should not be used in isolation. It is part of the <strong>Cognitive Hypothesis Testing (CHT)</strong> framework that requires:</p>
-<ul style="margin-left: 20px; margin-top: 10px;">
-<li>Using intelligence/cognitive tests as <em>screening tools</em>, not endpoints</li>
-<li>Generating hypotheses from initial cognitive profiles</li>
-<li>Testing hypotheses with additional measures of greater specificity</li>
-<li>Confirming findings through multiple data sources (RTI, observations, work samples)</li>
-<li>Establishing concurrent, ecological, and treatment validity</li>
-<li>Linking assessment findings to targeted interventions</li>
-</ul>
-</div>
-<div class="theory-section">
-<h4>Step 3 Requirement: Empirical Literature Review</h4>
-<p style="margin-bottom: 10px;"><strong>Before calculating C-DM:</strong> You must verify that the cognitive deficit is empirically associated with the achievement deficit. Examples:</p>
-<ul>
-<li><strong>Valid:</strong> Working memory (Gsm) deficit → Reading comprehension deficit (well-documented relationship)</li>
-<li><strong>Valid:</strong> Phonological processing deficit → Basic reading skills deficit (strong research support)</li>
-<li><strong>Valid:</strong> Visual-spatial processing deficit → Math calculation deficit (established link)</li>
-<li><strong>Invalid:</strong> Fluid reasoning (Gf) deficit → Basic word reading deficit (typically not related)</li>
-</ul>
-<p style="margin-top: 15px;"><em>Resources:</em> See McGrew & Wendling (2010) for comprehensive CHC-achievement relationships; Hale & Fiorello (2004) for neuropsychological-achievement relationships.</p>
-</div>
-<div class="theory-section">
-<h4>Dealing with Profile Variability</h4>
-<p style="margin-bottom: 10px;"><strong>Important:</strong> If standard factor scores don't reflect the child's true cognitive profile, you must create new factor scores:</p>
-<ul>
-<li><strong>Example 1:</strong> ACID profile (Arithmetic, Coding, Information, Digit Span) - common in reading disabilities</li>
-<li><strong>Example 2:</strong> Custom Gf composite using Matrix Reasoning + Picture Concepts for math word problem deficits</li>
-<li><strong>Example 3:</strong> Right hemisphere profile (low Comprehension depresses VCI; high Picture Concepts inflates PRI) - creates false average scores masking nonverbal LD</li>
-</ul>
-<p style="margin-top: 15px;"><strong>When creating new factor scores:</strong> Use at least 2 subtests measuring the same construct, calculate new reliability coefficients using Fisher's z-transformation (see Hale, Fiorello et al., 2008).</p>
-</div>
-<div class="dont-forget-box">
-<h4>💡 Profile Variability and IQ Interpretation</h4>
-<p>Profile variability precludes global IQ interpretation in children with SLD and limits the predictive validity of cognitive tests. <strong>Best practices require careful examination of "psychological processes" based on empirical profile analysis</strong> to determine SLD and how the processes interfere with academic achievement, for both identification and intervention purposes.</p>
-</div>
-<div class="theory-section">
-<h4>Step 8: Ecological Validity & Team Consensus</h4>
-<p style="margin-bottom: 10px;">After obtaining C-DM results, you must integrate with ALL evaluation data:</p>
-<ul>
-<li><strong>RTI Data:</strong> Progress monitoring graphs, intervention attempts, fidelity data</li>
-<li><strong>Classroom Evidence:</strong> Permanent products (work samples), teacher reports, grades</li>
-<li><strong>Observations:</strong> Structured classroom observations showing processing deficit impact</li>
-<li><strong>Developmental History:</strong> Early signs, family history, medical factors</li>
-<li><strong>Additional Testing:</strong> Neuropsychological measures confirming/refuting hypotheses</li>
-<li><strong>Exclusionary Factors:</strong> Rule out sensory, intellectual, emotional, cultural, environmental causes</li>
-</ul>
-<p style="margin-top: 15px;"><strong>Team Decision:</strong> Does all evidence converge to support SLD classification under IDEA statutory and regulatory requirements?</p>
-</div>
-<div class="theory-section">
-<h4>Common C-DM Pitfalls to Avoid</h4>
-<ul>
-<li>❌ Using highest score, lowest score, lowest achievement without theoretical justification</li>
-<li>❌ Ignoring literature on cognitive-achievement relationships</li>
-<li>❌ Using published factor scores when significant within-factor variability exists</li>
-<li>❌ Stopping at statistical significance without ecological validation</li>
-<li>❌ Making eligibility decision based solely on C-DM without considering all data</li>
-<li>❌ Failing to link identified processing deficits to intervention planning</li>
-<li>✅ <strong>DO:</strong> Use C-DM as part of comprehensive CHT approach with multiple data sources</li>
-</ul>
-</div>
-<div class="caution-box">
-<h4>⚠️ Linking Assessment to Intervention</h4>
-<p><strong>The CHT model is designed to link assessment to intervention.</strong> Once SLD is identified through C-DM:</p>
-<ul style="margin-left: 20px; margin-top: 10px;">
-<li>Develop targeted interventions addressing the specific processing deficit</li>
-<li>Monitor intervention effectiveness using single-subject design</li>
-<li>Modify interventions based on ongoing data collection</li>
-<li>Continue until treatment efficacy is achieved</li>
-</ul>
-<p style="margin-top: 10px;"><em>Recent neuroimaging research shows that when effective interventions target specific processing deficits, children's brain functioning normalizes (Simos et al., 2005; Shaywitz et al., 2003).</em></p>
-</div>
-<div class="dont-forget-box">
-<h4>💡 Remember</h4>
-<p><strong>Children with SLD have learning DEFICITS, not learning DELAYS.</strong> Neuropsychological research clearly shows they process information differently and require individualized instruction, not just more intensive instruction. The brain areas typical children use to solve tasks are different for those with SLD, and effective interventions lead to normalization of brain function.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<script>
-function switchTab(tabName) {
-// Hide all tab contents
-document.querySelectorAll('.tab-content').forEach(content => {
-content.classList.remove('active');
-});
-// Remove active class from all tabs
-document.querySelectorAll('.tab').forEach(tab => {
-tab.classList.remove('active');
-});
-// Show selected tab content
-document.getElementById(tabName).classList.add('active');
-// Add active class to clicked tab
-event.target.classList.add('active');
-// Scroll to top
-window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function calculateSED(r1, r2, sd) {
-return sd * Math.sqrt(2 - (r1 + r2));
-}
-function calculateCDM() {
-// Get input values
-const cogStrength = parseFloat(document.getElementById('cogStrength').value);
-const cogWeakness = parseFloat(document.getElementById('cogWeakness').value);
-const achDeficit = parseFloat(document.getElementById('achDeficit').value);
-const relCogStrength = parseFloat(document.getElementById('relCogStrength').value);
-const relCogWeakness = parseFloat(document.getElementById('relCogWeakness').value);
-const relAchDeficit = parseFloat(document.getElementById('relAchDeficit').value);
-const sd = parseFloat(document.getElementById('sd').value);
-const zScore = parseFloat(document.getElementById('significance').value);
-const achArea = document.getElementById('achArea').value || "Achievement Area";
-// Validate inputs
-if (isNaN(cogStrength) || isNaN(cogWeakness) || isNaN(achDeficit) || isNaN(relCogStrength) || isNaN(relCogWeakness) || isNaN(relAchDeficit)) {
-alert('Please fill in all required fields with valid numbers.');
-return;
-}
-// Validate reliability coefficients
-if (relCogStrength < 0.5 || relCogStrength > 0.99 || relCogWeakness < 0.5 || relCogWeakness > 0.99 || relAchDeficit < 0.5 || relAchDeficit > 0.99) {
-alert('Reliability coefficients should be between 0.50 and 0.99');
-return;
-}
-// Calculate Step 5
-const sed1 = calculateSED(relCogStrength, relCogWeakness, sd);
-const critical1 = sed1 * zScore;
-const diff1 = Math.abs(cogStrength - cogWeakness);
-const sig1 = diff1 >= critical1;
-// Calculate Step 6
-const sed2 = calculateSED(relCogStrength, relAchDeficit, sd);
-const critical2 = sed2 * zScore;
-const diff2 = Math.abs(cogStrength - achDeficit);
-const sig2 = diff2 >= critical2;
-// Calculate Step 7
-const sed3 = calculateSED(relCogWeakness, relAchDeficit, sd);
-const critical3 = sed3 * zScore;
-const diff3 = Math.abs(cogWeakness - achDeficit);
-const sig3 = diff3 < critical3;
-// Display results - Step 5
-document.getElementById('result-cogStrength').textContent = cogStrength;
-document.getElementById('result-cogWeakness').textContent = cogWeakness;
-document.getElementById('result-diff1').textContent = diff1.toFixed(2);
-document.getElementById('result-sed1').textContent = sed1.toFixed(2);
-document.getElementById('result-critical1').textContent = critical1.toFixed(2);
-document.getElementById('result-sig1').textContent = sig1 ? '✓ Significant Discordance' : '✗ Not Significant';
-document.getElementById('result-sig1').className = sig1 ? 'result-value significant' : 'result-value not-significant';
-document.getElementById('interp1').textContent = sig1 ? 'Significant intra-cognitive variability exists. There IS a processing deficit (cognitive strength significantly exceeds cognitive weakness), suggesting the child has a deficit in basic psychological processes.' : 'No significant intra-cognitive variability. The cognitive profile does not show sufficient discordance for C-DM criteria. Consider whether global low ability or other factors explain performance.';
-// Display results - Step 6
-document.getElementById('result-cogStrength2').textContent = cogStrength;
-document.getElementById('result-achDeficit2').textContent = achDeficit;
-document.getElementById('result-diff2').textContent = diff2.toFixed(2);
-document.getElementById('result-sed2').textContent = sed2.toFixed(2);
-document.getElementById('result-critical2').textContent = critical2.toFixed(2);
-document.getElementById('result-sig2').textContent = sig2 ? '✓ Significant Discordance' : '✗ Not Significant';
-document.getElementById('result-sig2').className = sig2 ? 'result-value significant' : 'result-value not-significant';
-document.getElementById('interp2').textContent = sig2 ? 'Unexpected underachievement is present. Achievement is significantly below cognitive strengths, indicating the child is not performing at their potential level (consistent with SLD statutory definition).' : 'No unexpected underachievement. Achievement is relatively consistent with cognitive strengths, not indicating sufficient ability-achievement discordance for SLD.';
-// Display results - Step 7
-document.getElementById('result-cogWeakness3').textContent = cogWeakness;
-document.getElementById('result-achDeficit3').textContent = achDeficit;
-document.getElementById('result-diff3').textContent = diff3.toFixed(2);
-document.getElementById('result-sed3').textContent = sed3.toFixed(2);
-document.getElementById('result-critical3').textContent = critical3.toFixed(2);
-document.getElementById('result-sig3').textContent = sig3 ? '✓ Concordance Exists' : '✗ Discordance Exists';
-document.getElementById('result-sig3').className = sig3 ? 'result-value significant' : 'result-value not-significant';
-let interp3Text = '';
-if (sig3) {
-interp3Text = 'Concordance confirmed. No significant difference exists between cognitive weakness and achievement deficit. The processing deficit plausibly explains the achievement problem (cognitive deficit → academic deficit relationship established).';
-} else if (achDeficit < cogWeakness) {
-interp3Text = 'Achievement is significantly BELOW cognitive weakness. This suggests additional factors (beyond the cognitive deficit) may be impacting achievement. Consider comorbid conditions, emotional factors, or inadequate instruction. May still warrant SLD classification with additional evaluation.';
-} else {
-interp3Text = 'Achievement is significantly ABOVE cognitive weakness. This may indicate the child is using compensatory strategies to mask the deficit, or the achievement test is not sensitive to the processing weakness. Carefully evaluate ecological validity before making eligibility decision.';
-}
-document.getElementById('interp3').textContent = interp3Text;
-// Final Conclusion
-const allCriteriaMet = sig1 && sig2 && sig3;
-const conclusion = document.getElementById('conclusion');
-const sigLevel = zScore === 1.96 ? 'p < .05' : 'p < .01';
-if (allCriteriaMet) {
-conclusion.className = 'conclusion';
-document.getElementById('finalConclusion').innerHTML = `
-<strong>✓ ALL THREE C-DM CRITERIA MET (at ${sigLevel} level)</strong><br><br>
-The statistical pattern of scores is <strong>consistent with</strong> Specific Learning Disability in ${achArea}. The child demonstrates:<br>
-<ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
-<li>✓ <strong>Discordance:</strong> Significant intra-cognitive variability (processing deficit exists)</li>
-<li>✓ <strong>Discordance:</strong> Unexpected underachievement relative to cognitive strengths</li>
-<li>✓ <strong>Concordance:</strong> Achievement consistent with cognitive weakness (deficit explains underachievement)</li>
-</ul>
-<br>
-<strong style="color: #d32f2f;">⚠️ CRITICAL REMINDER:</strong> These statistical findings support but DO NOT CONFIRM SLD alone. You must proceed to Step 8.
-`;
-document.getElementById('nextSteps').innerHTML = `<strong>Step 8 (REQUIRED):</strong> Review ALL evaluation data with the multidisciplinary team: (1) RTI progress monitoring showing chronic nonresponse to increasingly intensive interventions, (2) Classroom observations documenting processing deficit impact, (3) Permanent products showing achievement deficit, (4) Teacher/parent reports, (5) Additional neuropsychological measures confirming hypotheses, (6) Exclusionary factors ruled out. <strong>Ecological validity must be established</strong> before SLD determination. Then develop individualized interventions targeting the identified processing weakness (see CHT framework for intervention planning).`;
-} else {
-conclusion.className = 'conclusion negative';
-let failedSteps = [];
-if (!sig1) failedSteps.push('Step 5 (Intra-cognitive discordance not found - no processing deficit evident)');
-if (!sig2) failedSteps.push('Step 6 (No unexpected underachievement - achievement consistent with strengths)');
-if (!sig3) failedSteps.push('Step 7 (No concordance - cognitive weakness does not explain achievement deficit)');
-document.getElementById('finalConclusion').innerHTML = `
-<strong>✗ C-DM CRITERIA NOT FULLY MET</strong><br><br>
-The following statistical criteria were NOT met:<br>
-<ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
-${failedSteps.map(step => `<li>✗ ${step}</li>`).join('')}
-</ul>
-<br>
-Based on the C-DM statistical pattern alone, this profile does <strong>not</strong> provide sufficient evidence for SLD identification. The achievement difficulties may be due to other factors (e.g., learning delay vs. learning deficit, low global ability, inadequate instruction, other disorder, environmental factors).
-`;
-document.getElementById('nextSteps').innerHTML = `<strong>Consider alternative explanations:</strong> (1) Low achievement without processing deficit may indicate need for more intensive instruction (learning delay), not SLD, (2) Other disabilities (ADHD, anxiety, depression, language disorder) may better explain difficulties, (3) Instructional factors, attendance, language barriers, or environmental issues may be primary cause, (4) May need additional cognitive/neuropsychological testing to identify different processing deficits, (5) Return to Steps 1-3 to reconsider cognitive profile or cognitive-achievement relationship. Continue intensive RTI interventions while gathering additional data.`;
-}
-// Show results
-document.getElementById('results').classList.add('show');
-// Scroll to results
-document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-function resetForm() {
-document.getElementById('cogStrength').value = '';
-document.getElementById('cogWeakness').value = '';
-document.getElementById('achDeficit').value = '';
-document.getElementById('relCogStrength').value = '';
-document.getElementById('relCogWeakness').value = '';
-document.getElementById('relAchDeficit').value = '';
-document.getElementById('sd').value = '15';
-document.getElementById('significance').value = '1.96';
-document.getElementById('achArea').value = '';
-document.getElementById('results').classList.remove('show');
-window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function loadExample() {
-document.getElementById('cogStrength').value = '110';
-document.getElementById('cogWeakness').value = '85';
-document.getElementById('achDeficit').value = '82';
-document.getElementById('relCogStrength').value = '0.92';
-document.getElementById('relCogWeakness').value = '0.88';
-document.getElementById('relAchDeficit').value = '0.90';
-document.getElementById('achArea').value = 'Reading - Basic Reading Skills';
-alert('Example data loaded! This represents a child with:\n\n• High Verbal Comprehension (VCI = 110)\n• Low Working Memory (WMI = 85)\n• Low Reading Achievement (82)\n\nClick "Calculate C-DM Analysis" to see results.');
-}
-// Keyboard support
-document.addEventListener('DOMContentLoaded', function() {
-const inputs = document.querySelectorAll('input');
-inputs.forEach(input => {
-input.addEventListener('keypress', function(e) {
-if (e.key === 'Enter') {
-calculateCDM();
-}
-});
-});
-});
-</script>
+            <!-- Calculator Tab -->
+            <div id="calculator" class="tab-content active">
+                <div class="dont-forget-box">
+                    <h4>💡 DON'T FORGET</h4>
+                    <p><strong>Learning Delay vs. Learning Deficit:</strong> The difference between a child with low achievement (learning delay) and a child with specific learning disability (learning deficit) is particularly relevant for SLD classification and service delivery. If a child has a learning <strong>delay</strong>, then a more intensive instructional approach can be used, because they learn similarly to others but need more instruction. If a child has a learning <strong>deficit</strong>, then a more individualized instructional approach is needed, because they learn differently than others and need instruction designed to meet their unique needs.</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>📖 About the C-DM Method</h3>
+                    <p>The Concordance-Discordance Model uses statistical analysis to identify Specific Learning Disabilities by comparing cognitive strengths, cognitive weaknesses, and achievement deficits. This is part of the Cognitive Hypothesis Testing (CHT) approach that emphasizes comprehensive evaluation for children who do not respond to RTI (Response to Intervention). The C-DM addresses IDEA statutory and regulatory requirements by examining patterns of processing strengths and weaknesses.</p>
+                </div>
+
+                <div class="caution-box">
+                    <h4>⚠️ CAUTION</h4>
+                    <p>The C-DM approach for SLD identification requires careful evaluation of cognitive strengths, deficits, and associated achievement deficits to ensure <strong>ecological validity</strong> of findings. It is inappropriate to just choose the highest cognitive score, the lowest cognitive score, and the lowest achievement score, and then see if they are significantly different. This strictly numerical approach will lead to poor diagnostic and intervention decisions. <strong>Clinical significance and ecological validity must accompany statistical significance.</strong></p>
+                </div>
+
+                <div class="formula-box">
+                    <p style="margin-bottom: 10px; color: #856404;"><strong>SED Formula:</strong></p>
+                    <code>SED = SD × √[2 - (r₁ + r₂)]</code>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #856404;">Critical Value = SED × 1.96 (p < .05) or 2.58 (p < .01)</p>
+                </div>
+
+                <div class="steps-guide">
+                    <h3>📋 C-DM as Part of Comprehensive Evaluation (Steps 5-7 of 8)</h3>
+                    <p style="margin-bottom: 15px;"><strong>Prerequisites (Steps 1-4):</strong> Before using this calculator, ensure you have:</p>
+                    <ol>
+                        <li><strong>Step 1:</strong> Determined cognitive profile shows sufficient variability (not consistent across all subtests)</li>
+                        <li><strong>Step 2:</strong> Confirmed achievement deficit through standardized testing, RTI data, classroom work, and teacher reports</li>
+                        <li><strong>Step 3:</strong> Reviewed literature to ensure cognitive deficit is empirically associated with achievement deficit</li>
+                        <li><strong>Step 4:</strong> Obtained reliability coefficients from test manuals</li>
+                    </ol>
+                    <p style="margin-top: 15px; margin-bottom: 15px;"><strong>This Calculator Performs Steps 5-7:</strong></p>
+                    <ol start="5">
+                        <li><strong>Step 5:</strong> Calculate discordance between cognitive strength and weakness</li>
+                        <li><strong>Step 6:</strong> Calculate discordance between cognitive strength and achievement deficit</li>
+                        <li><strong>Step 7:</strong> Calculate concordance between cognitive weakness and achievement deficit</li>
+                    </ol>
+                    <p style="margin-top: 15px;"><strong>After calculation, proceed to Step 8:</strong> Determine ecological validity with team consensus using all evaluation data (RTI, observations, work samples, etc.)</p>
+                </div>
+
+                <!-- Input Section -->
+                <div class="section">
+                    <h2><span class="step-indicator">5</span>Enter Test Scores (Standard Scores)</h2>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="cogStrength">Cognitive Strength Score:</label>
+                            <input type="number" id="cogStrength" placeholder="e.g., 110" min="40" max="160" step="1">
+                            <p class="help-text">Highest cognitive ability (e.g., VCI, PRI, Gf, Gc)</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="cogWeakness">Cognitive Weakness Score:</label>
+                            <input type="number" id="cogWeakness" placeholder="e.g., 85" min="40" max="160" step="1">
+                            <p class="help-text">Lowest cognitive ability (e.g., WMI, PSI, Gsm, Gs)</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="achDeficit">Achievement Deficit Score:</label>
+                            <input type="number" id="achDeficit" placeholder="e.g., 82" min="40" max="160" step="1">
+                            <p class="help-text">Low achievement area (must be empirically linked to cognitive deficit)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reliability Section -->
+                <div class="section">
+                    <h2><span class="step-indicator">6</span>Enter Reliability Coefficients</h2>
+                    
+                    <div class="caution-box">
+                        <h4>📘 Finding Reliability Coefficients</h4>
+                        <p>These values come from test technical manuals (look for "coefficient alpha" or "internal consistency"). Typical values: 0.80-0.98. <strong>Note:</strong> If using subtest combinations to create new factor scores (e.g., ACID profile, custom Gf composite), you must calculate new reliability coefficients using Fisher's z-transformation (see Hale, Fiorello et al., 2008).</p>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="relCogStrength">Reliability - Cognitive Strength (r₁):</label>
+                            <input type="number" id="relCogStrength" placeholder="e.g., 0.92" min="0.50" max="0.99" step="0.01">
+                            <p class="help-text">From test manual (coefficient alpha)</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="relCogWeakness">Reliability - Cognitive Weakness (r₂):</label>
+                            <input type="number" id="relCogWeakness" placeholder="e.g., 0.88" min="0.50" max="0.99" step="0.01">
+                            <p class="help-text">From test manual (coefficient alpha)</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="relAchDeficit">Reliability - Achievement Deficit (r₃):</label>
+                            <input type="number" id="relAchDeficit" placeholder="e.g., 0.90" min="0.50" max="0.99" step="0.01">
+                            <p class="help-text">From test manual (coefficient alpha)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="section">
+                    <h2><span class="step-indicator">7</span>Analysis Settings</h2>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="sd">Standard Deviation (SD):</label>
+                            <input type="number" id="sd" value="15" min="1" max="30" step="0.1">
+                            <p class="help-text">Typically 15 for most tests (WISC, WIAT, WJ)</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="significance">Significance Level:</label>
+                            <select id="significance">
+                                <option value="1.96">p < .05 (1.96) - Standard</option>
+                                <option value="2.58">p < .01 (2.58) - Stringent</option>
+                            </select>
+                            <p class="help-text">Most practitioners use p < .05</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="achArea">Achievement Area (Optional):</label>
+                            <select id="achArea">
+                                <option value="">Select area...</option>
+                                <option value="Reading - Basic Reading Skills">Reading - Basic Reading Skills</option>
+                                <option value="Reading - Reading Fluency">Reading - Reading Fluency</option>
+                                <option value="Reading - Reading Comprehension">Reading - Reading Comprehension</option>
+                                <option value="Mathematics - Math Calculation">Mathematics - Math Calculation</option>
+                                <option value="Mathematics - Math Problem Solving">Mathematics - Math Problem Solving</option>
+                                <option value="Written Expression - Spelling">Written Expression - Spelling</option>
+                                <option value="Written Expression - Writing Fluency">Written Expression - Writing Fluency</option>
+                                <option value="Written Expression - Written Expression">Written Expression - Written Expression</option>
+                                <option value="Oral Language - Listening Comprehension">Oral Language - Listening Comprehension</option>
+                                <option value="Oral Language - Oral Expression">Oral Language - Oral Expression</option>
+                            </select>
+                            <p class="help-text">For report purposes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="calculateCDM()">🔢 Calculate C-DM Analysis</button>
+                    <button class="btn btn-info" onclick="loadExample()">📝 Load Example Data</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results" id="results">
+                    <div class="section">
+                        <h2>📊 C-DM Analysis Results</h2>
+
+                        <!-- Step 5 -->
+                        <div class="result-card">
+                            <h3><span class="step-indicator">5</span>Step 5: Discordance - Cognitive Strength vs. Cognitive Weakness</h3>
+                            <div class="result-item">
+                                <span class="result-label">Cognitive Strength Score:</span>
+                                <span class="result-value" id="result-cogStrength"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Cognitive Weakness Score:</span>
+                                <span class="result-value" id="result-cogWeakness"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Difference:</span>
+                                <span class="result-value" id="result-diff1"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">SED:</span>
+                                <span class="result-value" id="result-sed1"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Critical Value:</span>
+                                <span class="result-value" id="result-critical1"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Result:</span>
+                                <span class="result-value" id="result-sig1"></span>
+                            </div>
+                            <div class="interpretation">
+                                <strong>Interpretation:</strong> <span id="interp1"></span>
+                            </div>
+                        </div>
+
+                        <!-- Step 6 -->
+                        <div class="result-card">
+                            <h3><span class="step-indicator">6</span>Step 6: Discordance - Cognitive Strength vs. Achievement Deficit</h3>
+                            <div class="result-item">
+                                <span class="result-label">Cognitive Strength Score:</span>
+                                <span class="result-value" id="result-cogStrength2"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Achievement Deficit Score:</span>
+                                <span class="result-value" id="result-achDeficit2"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Difference:</span>
+                                <span class="result-value" id="result-diff2"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">SED:</span>
+                                <span class="result-value" id="result-sed2"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Critical Value:</span>
+                                <span class="result-value" id="result-critical2"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Result:</span>
+                                <span class="result-value" id="result-sig2"></span>
+                            </div>
+                            <div class="interpretation">
+                                <strong>Interpretation:</strong> <span id="interp2"></span>
+                            </div>
+                        </div>
+
+                        <!-- Step 7 -->
+                        <div class="result-card">
+                            <h3><span class="step-indicator">7</span>Step 7: Concordance - Cognitive Weakness vs. Achievement Deficit</h3>
+                            <div class="result-item">
+                                <span class="result-label">Cognitive Weakness Score:</span>
+                                <span class="result-value" id="result-cogWeakness3"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Achievement Deficit Score:</span>
+                                <span class="result-value" id="result-achDeficit3"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Difference:</span>
+                                <span class="result-value" id="result-diff3"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">SED:</span>
+                                <span class="result-value" id="result-sed3"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Critical Value:</span>
+                                <span class="result-value" id="result-critical3"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Result:</span>
+                                <span class="result-value" id="result-sig3"></span>
+                            </div>
+                            <div class="interpretation">
+                                <strong>Interpretation:</strong> <span id="interp3"></span>
+                            </div>
+                        </div>
+
+                        <!-- Final Conclusion -->
+                        <div class="conclusion" id="conclusion">
+                            <h3>🎯 C-DM Statistical Pattern Results</h3>
+                            <p id="finalConclusion"></p>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(0,0,0,0.1);">
+                                <p style="font-size: 0.9em;"><strong>Step 8 - Next Steps:</strong> <span id="nextSteps"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background & Theory Tab -->
+            <div id="background" class="tab-content">
+                <div class="section">
+                    <h2>📚 Theoretical Background</h2>
+                    
+                    <div class="theory-section">
+                        <h4>The Balanced Practice Model (Hale, 2006)</h4>
+                        <p style="margin-bottom: 15px;">The C-DM is part of a comprehensive three-tier model:</p>
+                        <ul>
+                            <li><strong>Tier 1:</strong> Standard Protocol RTI (~85% of children) - Universal screening and evidence-based instruction</li>
+                            <li><strong>Tier 2:</strong> Problem-Solving RTI (~10% of children) - Individualized interventions for nonresponders</li>
+                            <li><strong>Tier 3:</strong> Comprehensive Evaluation + Specialized Services (~5% of children) - For chronic nonresponders, includes C-DM analysis to determine SLD vs. other disorders</li>
+                        </ul>
+                    </div>
+
+                    <div class="dont-forget-box">
+                        <h4>💡 The Learning Disabilities Roundtable (2002, 2004)</h4>
+                        <p>"The identification of a core cognitive deficit, or a disorder in one or more of the basic psychological processes, predictive of an imperfect ability to learn, is a marker for an SLD" and "also acknowledges intra-individual differences as a fundamental concept of SLD."</p>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>Why C-DM Over Ability-Achievement Discrepancy?</h4>
+                        <p style="margin-bottom: 10px;">Traditional discrepancy methods are problematic because they:</p>
+                        <ul>
+                            <li>Do not discriminate well between low achievers and children with SLD</li>
+                            <li>Are applied inconsistently across districts and states</li>
+                            <li>Lead to overidentification of minority students</li>
+                            <li>Use arbitrary cutoff scores that don't account for profile variability</li>
+                            <li>Create a "wait-to-fail" paradigm preventing early intervention</li>
+                            <li>Focus on "test and place" rather than intervention</li>
+                        </ul>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>Why C-DM Over RTI Alone?</h4>
+                        <p style="margin-bottom: 10px;">While RTI is valuable for prevention and service delivery, it cannot be used alone for SLD identification because:</p>
+                        <ul>
+                            <li>There is no agreed-upon method, curriculum, or measurement tools</li>
+                            <li>Different RTI methods identify different children as nonresponders</li>
+                            <li>RTI shows only that a child didn't respond - not <em>why</em> they didn't respond</li>
+                            <li>There is no "true positive" in an RTI model for disability determination</li>
+                            <li>Nonresponse can occur for many reasons (only one of which is SLD)</li>
+                            <li>RTI does not address IDEA statutory requirements for processing deficits</li>
+                        </ul>
+                    </div>
+
+                    <div class="caution-box">
+                        <h4>⚠️ CRITICAL DISTINCTION</h4>
+                        <p><strong>RTI is excellent for serving children's needs, but scientifically flawed for disability determination.</strong> The final IDEA regulations (2006) state: "RTI is only one component of the process to identify children in need of special education... Determining why a child has not responded to research-based interventions requires a comprehensive evaluation... An RTI process does not replace the need for a comprehensive evaluation."</p>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>The "Third Method" Approach</h4>
+                        <p style="margin-bottom: 10px;">IDEA 2004 allows three methods for SLD identification:</p>
+                        <ul>
+                            <li><strong>Method 1:</strong> Ability-Achievement Discrepancy (no longer required, widely criticized)</li>
+                            <li><strong>Method 2:</strong> RTI/Failure to Respond (cannot determine SLD alone)</li>
+                            <li><strong>Method 3:</strong> Pattern of Strengths and Weaknesses (PSW) - "May permit the use of other alternative research-based procedures" (§300.8(c)(10))</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>C-DM is a PSW approach</strong> that addresses both IDEA statutory (processing deficit) and regulatory (comprehensive evaluation) requirements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clinical Guidance Tab -->
+            <div id="guidance" class="tab-content">
+                <div class="section">
+                    <h2>📖 Clinical Guidance for C-DM Use</h2>
+
+                    <div class="caution-box">
+                        <h4>⚠️ ESSENTIAL: Cognitive Hypothesis Testing (CHT)</h4>
+                        <p>The C-DM should not be used in isolation. It is part of the <strong>Cognitive Hypothesis Testing (CHT)</strong> framework that requires:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Using intelligence/cognitive tests as <em>screening tools</em>, not endpoints</li>
+                            <li>Generating hypotheses from initial cognitive profiles</li>
+                            <li>Testing hypotheses with additional measures of greater specificity</li>
+                            <li>Confirming findings through multiple data sources (RTI, observations, work samples)</li>
+                            <li>Establishing concurrent, ecological, and treatment validity</li>
+                            <li>Linking assessment findings to targeted interventions</li>
+                        </ul>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>Step 3 Requirement: Empirical Literature Review</h4>
+                        <p style="margin-bottom: 10px;"><strong>Before calculating C-DM:</strong> You must verify that the cognitive deficit is empirically associated with the achievement deficit. Examples:</p>
+                        <ul>
+                            <li><strong>Valid:</strong> Working memory (Gsm) deficit → Reading comprehension deficit (well-documented relationship)</li>
+                            <li><strong>Valid:</strong> Phonological processing deficit → Basic reading skills deficit (strong research support)</li>
+                            <li><strong>Valid:</strong> Visual-spatial processing deficit → Math calculation deficit (established link)</li>
+                            <li><strong>Invalid:</strong> Fluid reasoning (Gf) deficit → Basic word reading deficit (typically not related)</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><em>Resources:</em> See McGrew & Wendling (2010) for comprehensive CHC-achievement relationships; Hale & Fiorello (2004) for neuropsychological-achievement relationships.</p>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>Dealing with Profile Variability</h4>
+                        <p style="margin-bottom: 10px;"><strong>Important:</strong> If standard factor scores don't reflect the child's true cognitive profile, you must create new factor scores:</p>
+                        <ul>
+                            <li><strong>Example 1:</strong> ACID profile (Arithmetic, Coding, Information, Digit Span) - common in reading disabilities</li>
+                            <li><strong>Example 2:</strong> Custom Gf composite using Matrix Reasoning + Picture Concepts for math word problem deficits</li>
+                            <li><strong>Example 3:</strong> Right hemisphere profile (low Comprehension depresses VCI; high Picture Concepts inflates PRI) - creates false average scores masking nonverbal LD</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>When creating new factor scores:</strong> Use at least 2 subtests measuring the same construct, calculate new reliability coefficients using Fisher's z-transformation (see Hale, Fiorello et al., 2008).</p>
+                    </div>
+
+                    <div class="dont-forget-box">
+                        <h4>💡 Profile Variability and IQ Interpretation</h4>
+                        <p>Profile variability precludes global IQ interpretation in children with SLD and limits the predictive validity of cognitive tests. <strong>Best practices require careful examination of "psychological processes" based on empirical profile analysis</strong> to determine SLD and how the processes interfere with academic achievement, for both identification and intervention purposes.</p>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>Step 8: Ecological Validity & Team Consensus</h4>
+                        <p style="margin-bottom: 10px;">After obtaining C-DM results, you must integrate with ALL evaluation data:</p>
+                        <ul>
+                            <li><strong>RTI Data:</strong> Progress monitoring graphs, intervention attempts, fidelity data</li>
+                            <li><strong>Classroom Evidence:</strong> Permanent products (work samples), teacher reports, grades</li>
+                            <li><strong>Observations:</strong> Structured classroom observations showing processing deficit impact</li>
+                            <li><strong>Developmental History:</strong> Early signs, family history, medical factors</li>
+                            <li><strong>Additional Testing:</strong> Neuropsychological measures confirming/refuting hypotheses</li>
+                            <li><strong>Exclusionary Factors:</strong> Rule out sensory, intellectual, emotional, cultural, environmental causes</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Team Decision:</strong> Does all evidence converge to support SLD classification under IDEA statutory and regulatory requirements?</p>
+                    </div>
+
+                    <div class="theory-section">
+                        <h4>Common C-DM Pitfalls to Avoid</h4>
+                        <ul>
+                            <li>❌ Using highest score, lowest score, lowest achievement without theoretical justification</li>
+                            <li>❌ Ignoring literature on cognitive-achievement relationships</li>
+                            <li>❌ Using published factor scores when significant within-factor variability exists</li>
+                            <li>❌ Stopping at statistical significance without ecological validation</li>
+                            <li>❌ Making eligibility decision based solely on C-DM without considering all data</li>
+                            <li>❌ Failing to link identified processing deficits to intervention planning</li>
+                            <li>✅ <strong>DO:</strong> Use C-DM as part of comprehensive CHT approach with multiple data sources</li>
+                        </ul>
+                    </div>
+
+                    <div class="caution-box">
+                        <h4>⚠️ Linking Assessment to Intervention</h4>
+                        <p><strong>The CHT model is designed to link assessment to intervention.</strong> Once SLD is identified through C-DM:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Develop targeted interventions addressing the specific processing deficit</li>
+                            <li>Monitor intervention effectiveness using single-subject design</li>
+                            <li>Modify interventions based on ongoing data collection</li>
+                            <li>Continue until treatment efficacy is achieved</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><em>Recent neuroimaging research shows that when effective interventions target specific processing deficits, children's brain functioning normalizes (Simos et al., 2005; Shaywitz et al., 2003).</em></p>
+                    </div>
+
+                    <div class="dont-forget-box">
+                        <h4>💡 Remember</h4>
+                        <p><strong>Children with SLD have learning DEFICITS, not learning DELAYS.</strong> Neuropsychological research clearly shows they process information differently and require individualized instruction, not just more intensive instruction. The brain areas typical children use to solve tasks are different for those with SLD, and effective interventions lead to normalization of brain function.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function calculateSED(r1, r2, sd) {
+            return sd * Math.sqrt(2 - (r1 + r2));
+        }
+
+        function calculateCDM() {
+            // Get input values
+            const cogStrength = parseFloat(document.getElementById('cogStrength').value);
+            const cogWeakness = parseFloat(document.getElementById('cogWeakness').value);
+            const achDeficit = parseFloat(document.getElementById('achDeficit').value);
+            
+            const relCogStrength = parseFloat(document.getElementById('relCogStrength').value);
+            const relCogWeakness = parseFloat(document.getElementById('relCogWeakness').value);
+            const relAchDeficit = parseFloat(document.getElementById('relAchDeficit').value);
+            
+            const sd = parseFloat(document.getElementById('sd').value);
+            const zScore = parseFloat(document.getElementById('significance').value);
+            const achArea = document.getElementById('achArea').value || "Achievement Area";
+
+            // Validate inputs
+            if (isNaN(cogStrength) || isNaN(cogWeakness) || isNaN(achDeficit) ||
+                isNaN(relCogStrength) || isNaN(relCogWeakness) || isNaN(relAchDeficit)) {
+                alert('Please fill in all required fields with valid numbers.');
+                return;
+            }
+
+            // Validate reliability coefficients
+            if (relCogStrength < 0.5 || relCogStrength > 0.99 ||
+                relCogWeakness < 0.5 || relCogWeakness > 0.99 ||
+                relAchDeficit < 0.5 || relAchDeficit > 0.99) {
+                alert('Reliability coefficients should be between 0.50 and 0.99');
+                return;
+            }
+
+            // Calculate Step 5
+            const sed1 = calculateSED(relCogStrength, relCogWeakness, sd);
+            const critical1 = sed1 * zScore;
+            const diff1 = Math.abs(cogStrength - cogWeakness);
+            const sig1 = diff1 >= critical1;
+
+            // Calculate Step 6
+            const sed2 = calculateSED(relCogStrength, relAchDeficit, sd);
+            const critical2 = sed2 * zScore;
+            const diff2 = Math.abs(cogStrength - achDeficit);
+            const sig2 = diff2 >= critical2;
+
+            // Calculate Step 7
+            const sed3 = calculateSED(relCogWeakness, relAchDeficit, sd);
+            const critical3 = sed3 * zScore;
+            const diff3 = Math.abs(cogWeakness - achDeficit);
+            const sig3 = diff3 < critical3;
+
+            // Display results - Step 5
+            document.getElementById('result-cogStrength').textContent = cogStrength;
+            document.getElementById('result-cogWeakness').textContent = cogWeakness;
+            document.getElementById('result-diff1').textContent = diff1.toFixed(2);
+            document.getElementById('result-sed1').textContent = sed1.toFixed(2);
+            document.getElementById('result-critical1').textContent = critical1.toFixed(2);
+            document.getElementById('result-sig1').textContent = sig1 ? '✓ Significant Discordance' : '✗ Not Significant';
+            document.getElementById('result-sig1').className = sig1 ? 'result-value significant' : 'result-value not-significant';
+            
+            document.getElementById('interp1').textContent = sig1 
+                ? 'Significant intra-cognitive variability exists. There IS a processing deficit (cognitive strength significantly exceeds cognitive weakness), suggesting the child has a deficit in basic psychological processes.'
+                : 'No significant intra-cognitive variability. The cognitive profile does not show sufficient discordance for C-DM criteria. Consider whether global low ability or other factors explain performance.';
+
+            // Display results - Step 6
+            document.getElementById('result-cogStrength2').textContent = cogStrength;
+            document.getElementById('result-achDeficit2').textContent = achDeficit;
+            document.getElementById('result-diff2').textContent = diff2.toFixed(2);
+            document.getElementById('result-sed2').textContent = sed2.toFixed(2);
+            document.getElementById('result-critical2').textContent = critical2.toFixed(2);
+            document.getElementById('result-sig2').textContent = sig2 ? '✓ Significant Discordance' : '✗ Not Significant';
+            document.getElementById('result-sig2').className = sig2 ? 'result-value significant' : 'result-value not-significant';
+            
+            document.getElementById('interp2').textContent = sig2 
+                ? 'Unexpected underachievement is present. Achievement is significantly below cognitive strengths, indicating the child is not performing at their potential level (consistent with SLD statutory definition).'
+                : 'No unexpected underachievement. Achievement is relatively consistent with cognitive strengths, not indicating sufficient ability-achievement discordance for SLD.';
+
+            // Display results - Step 7
+            document.getElementById('result-cogWeakness3').textContent = cogWeakness;
+            document.getElementById('result-achDeficit3').textContent = achDeficit;
+            document.getElementById('result-diff3').textContent = diff3.toFixed(2);
+            document.getElementById('result-sed3').textContent = sed3.toFixed(2);
+            document.getElementById('result-critical3').textContent = critical3.toFixed(2);
+            document.getElementById('result-sig3').textContent = sig3 ? '✓ Concordance Exists' : '✗ Discordance Exists';
+            document.getElementById('result-sig3').className = sig3 ? 'result-value significant' : 'result-value not-significant';
+            
+            let interp3Text = '';
+            if (sig3) {
+                interp3Text = 'Concordance confirmed. No significant difference exists between cognitive weakness and achievement deficit. The processing deficit plausibly explains the achievement problem (cognitive deficit → academic deficit relationship established).';
+            } else if (achDeficit < cogWeakness) {
+                interp3Text = 'Achievement is significantly BELOW cognitive weakness. This suggests additional factors (beyond the cognitive deficit) may be impacting achievement. Consider comorbid conditions, emotional factors, or inadequate instruction. May still warrant SLD classification with additional evaluation.';
+            } else {
+                interp3Text = 'Achievement is significantly ABOVE cognitive weakness. This may indicate the child is using compensatory strategies to mask the deficit, or the achievement test is not sensitive to the processing weakness. Carefully evaluate ecological validity before making eligibility decision.';
+            }
+            document.getElementById('interp3').textContent = interp3Text;
+
+            // Final Conclusion
+            const allCriteriaMet = sig1 && sig2 && sig3;
+            const conclusion = document.getElementById('conclusion');
+            const sigLevel = zScore === 1.96 ? 'p < .05' : 'p < .01';
+            
+            if (allCriteriaMet) {
+                conclusion.className = 'conclusion';
+                document.getElementById('finalConclusion').innerHTML = `
+                    <strong>✓ ALL THREE C-DM CRITERIA MET (at ${sigLevel} level)</strong><br><br>
+                    The statistical pattern of scores is <strong>consistent with</strong> Specific Learning Disability in ${achArea}. The child demonstrates:<br>
+                    <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+                        <li>✓ <strong>Discordance:</strong> Significant intra-cognitive variability (processing deficit exists)</li>
+                        <li>✓ <strong>Discordance:</strong> Unexpected underachievement relative to cognitive strengths</li>
+                        <li>✓ <strong>Concordance:</strong> Achievement consistent with cognitive weakness (deficit explains underachievement)</li>
+                    </ul>
+                    <br>
+                    <strong style="color: #d32f2f;">⚠️ CRITICAL REMINDER:</strong> These statistical findings support but DO NOT CONFIRM SLD alone. You must proceed to Step 8.
+                `;
+                document.getElementById('nextSteps').innerHTML = `<strong>Step 8 (REQUIRED):</strong> Review ALL evaluation data with the multidisciplinary team: (1) RTI progress monitoring showing chronic nonresponse to increasingly intensive interventions, (2) Classroom observations documenting processing deficit impact, (3) Permanent products showing achievement deficit, (4) Teacher/parent reports, (5) Additional neuropsychological measures confirming hypotheses, (6) Exclusionary factors ruled out. <strong>Ecological validity must be established</strong> before SLD determination. Then develop individualized interventions targeting the identified processing weakness (see CHT framework for intervention planning).`;
+            } else {
+                conclusion.className = 'conclusion negative';
+                let failedSteps = [];
+                if (!sig1) failedSteps.push('Step 5 (Intra-cognitive discordance not found - no processing deficit evident)');
+                if (!sig2) failedSteps.push('Step 6 (No unexpected underachievement - achievement consistent with strengths)');
+                if (!sig3) failedSteps.push('Step 7 (No concordance - cognitive weakness does not explain achievement deficit)');
+                
+                document.getElementById('finalConclusion').innerHTML = `
+                    <strong>✗ C-DM CRITERIA NOT FULLY MET</strong><br><br>
+                    The following statistical criteria were NOT met:<br>
+                    <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+                        ${failedSteps.map(step => `<li>✗ ${step}</li>`).join('')}
+                    </ul>
+                    <br>
+                    Based on the C-DM statistical pattern alone, this profile does <strong>not</strong> provide sufficient evidence for SLD identification. The achievement difficulties may be due to other factors (e.g., learning delay vs. learning deficit, low global ability, inadequate instruction, other disorder, environmental factors).
+                `;
+                document.getElementById('nextSteps').innerHTML = `<strong>Consider alternative explanations:</strong> (1) Low achievement without processing deficit may indicate need for more intensive instruction (learning delay), not SLD, (2) Other disabilities (ADHD, anxiety, depression, language disorder) may better explain difficulties, (3) Instructional factors, attendance, language barriers, or environmental issues may be primary cause, (4) May need additional cognitive/neuropsychological testing to identify different processing deficits, (5) Return to Steps 1-3 to reconsider cognitive profile or cognitive-achievement relationship. Continue intensive RTI interventions while gathering additional data.`;
+            }
+
+            // Show results
+            document.getElementById('results').classList.add('show');
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetForm() {
+            document.getElementById('cogStrength').value = '';
+            document.getElementById('cogWeakness').value = '';
+            document.getElementById('achDeficit').value = '';
+            document.getElementById('relCogStrength').value = '';
+            document.getElementById('relCogWeakness').value = '';
+            document.getElementById('relAchDeficit').value = '';
+            document.getElementById('sd').value = '15';
+            document.getElementById('significance').value = '1.96';
+            document.getElementById('achArea').value = '';
+            
+            document.getElementById('results').classList.remove('show');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function loadExample() {
+            document.getElementById('cogStrength').value = '110';
+            document.getElementById('cogWeakness').value = '85';
+            document.getElementById('achDeficit').value = '82';
+            document.getElementById('relCogStrength').value = '0.92';
+            document.getElementById('relCogWeakness').value = '0.88';
+            document.getElementById('relAchDeficit').value = '0.90';
+            document.getElementById('achArea').value = 'Reading - Basic Reading Skills';
+            
+            alert('Example data loaded! This represents a child with:\n\n• High Verbal Comprehension (VCI = 110)\n• Low Working Memory (WMI = 85)\n• Low Reading Achievement (82)\n\nClick "Calculate C-DM Analysis" to see results.');
+        }
+
+        // Keyboard support
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateCDM();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
